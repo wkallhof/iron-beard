@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Raud.Core.Features.FileSystem;
 using Raud.Core.Extensions;
 using System.IO;
+using Raud.Core.Features.Generator;
+using Raud.Core.Features.Markdown;
 
 namespace Raud.Cli
 {
@@ -11,25 +13,23 @@ namespace Raud.Cli
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Console.WriteLine("Raud Generator -- Static Site Build");
 
-            Console.WriteLine("Arguments : " + string.Join(", ", args));
-            Console.WriteLine($"Current Directory: {Environment.CurrentDirectory}");
+            var inputArg = args.ElementAtOrDefault(0) ?? ".";
+            var outputArg = args.ElementAtOrDefault(1) ?? Path.Combine(inputArg, "output");
 
-            var path = args.FirstOrDefault() ?? string.Empty;
-            var directory =  Path.Join(Environment.CurrentDirectory, path);
+            var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, inputArg));
+            var outputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, outputArg));
+
+            Console.WriteLine("Input Directory: " + inputPath);
+            Console.WriteLine("Output Directory: " + outputPath);
 
             var fileSystem = new DiskFileSystem();
-            var result = fileSystem.GetFiles(directory);
-            if(!result.Success){
-                Console.WriteLine($"Error: {result.Error}");
-                return;
-            }
 
-            result.Data.ToList().ForEach(x => Console.WriteLine($"Name: {x.Name}, Extension: {x.Extension}, Directory: {x.Directory}"));
+            var generator = new RaudGenerator(fileSystem, inputPath, outputPath);
+            generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
 
-
+            await generator.Generate();
         }
-
     }
 }

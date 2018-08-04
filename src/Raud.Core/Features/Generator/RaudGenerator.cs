@@ -38,6 +38,9 @@ namespace Raud.Core.Features.Generator
             if(!this._fileProcessors.Any())
                 throw new Exception("No processors added to generator.");
 
+            Console.WriteLine("Clearing output directory");
+            await this._fileSystem.DeleteDirectoryAsync(this._outputDirectory);
+
             var inputs = this._fileSystem.GetFiles(this._inputDirectory);
 
             var outputFiles = await this.ProcessInputs(inputs, this._outputDirectory);

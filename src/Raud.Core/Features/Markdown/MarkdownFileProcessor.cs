@@ -28,8 +28,8 @@ namespace Raud.Core.Features.Markdown
             var output = OutputFile.FromInputFile(file);
             output.Content = html;
             output.Extension = ".html";
-            output.FullDirectory = Path.GetFullPath(Path.Combine(outputDirectory, output.RelativeDirectory));
-            output.FullPath = Path.GetFullPath(Path.Combine(output.FullDirectory, output.Name + output.Extension));
+            output.FullDirectory = Path.GetFullPath(outputDirectory + output.RelativeDirectory);
+            output.FullPath = Path.Combine(output.FullDirectory, output.Name + output.Extension);
 
             return (true, output);
         }

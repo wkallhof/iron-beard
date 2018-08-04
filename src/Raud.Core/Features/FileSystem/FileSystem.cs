@@ -16,6 +16,7 @@ namespace Raud.Core.Features.FileSystem
         Task<string> ReadAllTextAsync(string path);
         Task WriteOutputFilesAsync(IEnumerable<OutputFile> files);
         Task WriteOutputFileAsync(OutputFile file);
+        Task DeleteDirectoryAsync(string path);
     }
 
     public class DiskFileSystem : IFileSystem
@@ -50,6 +51,12 @@ namespace Raud.Core.Features.FileSystem
                 Console.WriteLine("Writing Output File : " + file.FullPath);
                 await writer.WriteLineAsync(file.Content).ConfigureAwait(false);
             } 
+        }
+
+        public Task DeleteDirectoryAsync(string path){
+            if(Directory.Exists(path))
+                Directory.Delete(path, recursive: true);
+            return Task.CompletedTask;
         }
 
         private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){

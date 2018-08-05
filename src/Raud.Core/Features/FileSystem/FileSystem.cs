@@ -17,6 +17,7 @@ namespace Raud.Core.Features.FileSystem
         Task WriteOutputFilesAsync(IEnumerable<OutputFile> files);
         Task WriteOutputFileAsync(OutputFile file);
         Task DeleteDirectoryAsync(string path);
+        Task CopyOutputFileAsync(OutputFile file);
 
         Task<string> CreateTempFolderAsync(string basePath);
         Task DeleteTempFolderAsync();
@@ -52,6 +53,11 @@ namespace Raud.Core.Features.FileSystem
         }
 
         public async Task WriteOutputFileAsync(OutputFile file){
+            if(file.DirectCopy){
+                await this.CopyOutputFileAsync(file);
+                return;
+            }
+            
             Directory.CreateDirectory(file.FullDirectory);
             using (var writer = File.CreateText(file.FullPath))
             {
@@ -64,6 +70,15 @@ namespace Raud.Core.Features.FileSystem
             if(Directory.Exists(path))
                 Directory.Delete(path, recursive: true);
             return Task.CompletedTask;
+        }
+
+        public async Task CopyOutputFileAsync(OutputFile file){
+            Directory.CreateDirectory(file.FullDirectory);
+            using (Stream source = File.Open(file.Input.FullPath, FileMode.Open))
+            using(Stream destination = File.Create(file.FullPath))
+            {
+                await source.CopyToAsync(destination);
+            }
         }
 
         public Task<string> CreateTempFolderAsync(string basePath)

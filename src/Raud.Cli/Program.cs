@@ -7,6 +7,8 @@ using System.IO;
 using Raud.Core.Features.Generator;
 using Raud.Core.Features.Markdown;
 using Raud.Core.Features.Razor;
+using Raud.Core.Features.Static;
+using System.Collections.Generic;
 
 namespace Raud.Cli
 {
@@ -30,6 +32,7 @@ namespace Raud.Cli
             var generator = new RaudGenerator(fileSystem, inputPath, outputPath);
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
             generator.AddProcessor(new RazorFileProcessor(fileSystem, inputPath));
+            generator.AddProcessor(new StaticFileProcessor(ignore: new List<string> { ".cshtml", ".md" }));
 
             await generator.Generate();
         }

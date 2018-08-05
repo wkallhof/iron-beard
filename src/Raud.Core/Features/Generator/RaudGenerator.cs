@@ -61,7 +61,7 @@ namespace Raud.Core.Features.Generator
         }
 
         private async Task<IEnumerable<OutputFile>> ProcessInputs(IEnumerable<InputFile> files, string outputDir){
-            var outputFiles = new List<OutputFile>();
+            var outputFiles = new Dictionary<string, OutputFile>();
             foreach(var processor in this._fileProcessors){
                 foreach(var file in files){
                     Console.WriteLine("Processing Input File : " + file.FullPath);
@@ -69,12 +69,12 @@ namespace Raud.Core.Features.Generator
                     if(!processed || output == null)
                         continue;
 
-                    outputFiles.Add(output);
+                    if(!outputFiles.ContainsKey(output.FullPath))
+                        outputFiles.Add(output.FullPath, output);
                 }
             }
-
-            // Grab unique values by path. TODO: Throw error if file conflict. 
-            return outputFiles.GroupBy(x => x.FullPath).Select(x => x.First());
+            
+            return outputFiles.Select(x => x.Value);
         }
 
         private async Task<IEnumerable<OutputFile>> ProcessOutputs(IEnumerable<OutputFile> files){

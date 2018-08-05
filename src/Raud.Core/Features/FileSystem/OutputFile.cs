@@ -4,6 +4,7 @@ namespace Raud.Core.Features.FileSystem
     {
         public string Content { get; set; }
         public InputFile Input { get; set; }
+        public bool DirectCopy { get; set; }
 
         public static OutputFile FromInputFile(InputFile file){
             return new OutputFile() { 

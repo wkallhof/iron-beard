@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Raud.Core.Features.FileSystem;
@@ -22,6 +23,8 @@ namespace Raud.Core.Features.Razor
             if (!file.Extension.ToLower().Equals(".cshtml") || file.Name.StartsWith("_"))
                 return (false, null);
 
+            Console.WriteLine($"[Razor] Processing Input : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
+
             var relativeFile = Path.Combine(file.RelativeDirectory, file.Name + file.Extension);
             var html = await this._renderer.RenderAsync(relativeFile, "test");
 
@@ -37,6 +40,8 @@ namespace Raud.Core.Features.Razor
         public async Task ProcessOutputAsync(OutputFile file){
             if(!file.Input.Extension.ToLower().Equals(".md"))
                 return;
+
+            Console.WriteLine($"[Razor] Processing Output : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
 
             var layoutTemplate = "@{ Layout = \"../Shared/_Layout.cshtml\"; }\n";
             var html = layoutTemplate + file.Content;

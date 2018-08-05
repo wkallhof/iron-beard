@@ -9,6 +9,7 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.1</LangVersion> 
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <RuntimeIdentifiers>win10-x64;osx.10.12-x64;debian.8-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
 </Project>

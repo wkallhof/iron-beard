@@ -61,7 +61,7 @@ namespace Raud.Core.Features.FileSystem
             Directory.CreateDirectory(file.FullDirectory);
             using (var writer = File.CreateText(file.FullPath))
             {
-                Console.WriteLine("Writing Output File : " + file.FullPath);
+                Console.WriteLine($"Writing Output File : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
                 await writer.WriteLineAsync(file.Content).ConfigureAwait(false);
             } 
         }
@@ -104,7 +104,6 @@ namespace Raud.Core.Features.FileSystem
             var filePath = Path.Combine(this._tempFolderPath, Guid.NewGuid().ToString() + ".tmp");
             using (var writer = File.CreateText(filePath))
             {
-                Console.WriteLine("Writing Temp File : " + filePath);
                 await writer.WriteLineAsync(content).ConfigureAwait(false);
             }
 

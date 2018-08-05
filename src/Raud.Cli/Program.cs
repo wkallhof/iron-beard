@@ -32,7 +32,7 @@ namespace Raud.Cli
             var generator = new RaudGenerator(fileSystem, inputPath, outputPath);
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
             generator.AddProcessor(new RazorFileProcessor(fileSystem, inputPath));
-            generator.AddProcessor(new StaticFileProcessor(ignore: new List<string> { ".cshtml", ".md" }));
+            generator.AddProcessor(new StaticFileProcessor(ignore: new List<string> { ".cshtml", ".md", ".DS_Store" }));
 
             await generator.Generate();
         }

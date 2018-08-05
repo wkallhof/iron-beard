@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Threading.Tasks;
 using Raud.Core.Extensions;
@@ -19,6 +20,8 @@ namespace Raud.Core.Features.Markdown
         {
             if (!file.Extension.ToLower().Equals(".md"))
                 return (false, null);
+
+            Console.WriteLine($"[Markdown] Processing Input: {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
 
             var markdown = await this._fileSystem.ReadAllTextAsync(file.FullPath);
             if (!markdown.IsSet())

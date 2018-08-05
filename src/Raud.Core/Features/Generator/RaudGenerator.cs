@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Raud.Core.Extensions;
@@ -38,25 +39,25 @@ namespace Raud.Core.Features.Generator
             if(!this._fileProcessors.Any())
                 throw new Exception("No processors added to generator.");
 
-            Console.WriteLine("Clearing output directory");
+            Console.WriteLine("Clearing output directory...");
             await this._fileSystem.DeleteDirectoryAsync(this._outputDirectory);
 
-            Console.WriteLine("Creating temp directory");
+            Console.WriteLine("Creating temp directory...");
             await this._fileSystem.CreateTempFolderAsync(this._inputDirectory);
 
-            Console.WriteLine("Loading files");
+            Console.WriteLine("Loading files...");
             var inputs = this._fileSystem.GetFiles(this._inputDirectory);
 
-            Console.WriteLine("Processing Inputs");
+            Console.WriteLine("Processing Inputs...");
             var outputFiles = await this.ProcessInputs(inputs, this._outputDirectory);
 
-            Console.WriteLine("Processing Outputs");
+            Console.WriteLine("Processing Outputs...");
             outputFiles = await this.ProcessOutputs(outputFiles);
 
-            Console.WriteLine("Deleting temp directory");
+            Console.WriteLine("Deleting temp directory...");
             await this._fileSystem.DeleteTempFolderAsync();
 
-            Console.WriteLine("Writing files");
+            Console.WriteLine("Writing files...");
             await this._fileSystem.WriteOutputFilesAsync(outputFiles);
         }
 
@@ -64,7 +65,6 @@ namespace Raud.Core.Features.Generator
             var outputFiles = new Dictionary<string, OutputFile>();
             foreach(var processor in this._fileProcessors){
                 foreach(var file in files){
-                    Console.WriteLine("Processing Input File : " + file.FullPath);
                     var (processed, output) = await processor.ProcessInputAsync(file, outputDir);
                     if(!processed || output == null)
                         continue;
@@ -73,7 +73,7 @@ namespace Raud.Core.Features.Generator
                         outputFiles.Add(output.FullPath, output);
                 }
             }
-            
+
             return outputFiles.Select(x => x.Value);
         }
 

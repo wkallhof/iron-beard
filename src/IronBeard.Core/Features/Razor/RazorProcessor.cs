@@ -63,7 +63,7 @@ namespace IronBeard.Core.Features.Razor
         private async Task<string> CreateTempAndRender(string fileContent, GeneratorContext context){
             var html = this.AppendLayoutInfo(fileContent, context.Layout);
             var tempFile = await this._fileSystem.CreateTempFileAsync(html);
-            return await this._renderer.RenderAsync(tempFile.RelativePath, "test");  
+            return await this._renderer.RenderAsync(tempFile.RelativePath, context);  
         }
 
         private string AppendLayoutInfo(string fileContent, InputFile layout){

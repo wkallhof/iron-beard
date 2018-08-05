@@ -6,6 +6,7 @@ using Raud.Core.Extensions;
 using System.IO;
 using Raud.Core.Features.Generator;
 using Raud.Core.Features.Markdown;
+using Raud.Core.Features.Razor;
 
 namespace Raud.Cli
 {
@@ -28,6 +29,7 @@ namespace Raud.Cli
 
             var generator = new RaudGenerator(fileSystem, inputPath, outputPath);
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
+            generator.AddProcessor(new RazorFileProcessor(fileSystem, inputPath));
 
             await generator.Generate();
         }

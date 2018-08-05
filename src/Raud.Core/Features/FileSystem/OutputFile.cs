@@ -3,6 +3,7 @@ namespace Raud.Core.Features.FileSystem
     public class OutputFile : InputFile
     {
         public string Content { get; set; }
+        public InputFile Input { get; set; }
 
         public static OutputFile FromInputFile(InputFile file){
             return new OutputFile() { 
@@ -10,7 +11,8 @@ namespace Raud.Core.Features.FileSystem
                 Extension = file.Extension, 
                 FullDirectory = file.FullDirectory,
                 FullPath = file.FullPath,
-                RelativeDirectory = file.RelativeDirectory
+                RelativeDirectory = file.RelativeDirectory,
+                Input = file
             };
         }
     }

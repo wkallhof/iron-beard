@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Raud.Core.Features.FileSystem;
-using Raud.Core.Extensions;
+using IronBeard.Core.Features.FileSystem;
+using IronBeard.Core.Extensions;
 using System.IO;
-using Raud.Core.Features.Generator;
-using Raud.Core.Features.Markdown;
-using Raud.Core.Features.Razor;
-using Raud.Core.Features.Static;
+using IronBeard.Core.Features.Generator;
+using IronBeard.Core.Features.Markdown;
+using IronBeard.Core.Features.Razor;
+using IronBeard.Core.Features.Static;
 using System.Collections.Generic;
 
-namespace Raud.Cli
+namespace IronBeard.Cli
 {
     class Program
     {
         static async Task Main(string[] args)
         {
-            Console.WriteLine("Raud Generator -- Static Site Build");
+            Console.WriteLine("IronBeard Generator -- Static Site Build");
 
             var inputArg = args.ElementAtOrDefault(0) ?? ".";
             var outputArg = args.ElementAtOrDefault(1) ?? Path.Combine(inputArg, "output");
@@ -29,7 +29,7 @@ namespace Raud.Cli
 
             var fileSystem = new DiskFileSystem();
 
-            var generator = new RaudGenerator(fileSystem, inputPath, outputPath);
+            var generator = new IronBeardGenerator(fileSystem, inputPath, outputPath);
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
             generator.AddProcessor(new RazorFileProcessor(fileSystem, inputPath));
             generator.AddProcessor(new StaticFileProcessor(ignore: new List<string> { ".cshtml", ".md", ".DS_Store" }));

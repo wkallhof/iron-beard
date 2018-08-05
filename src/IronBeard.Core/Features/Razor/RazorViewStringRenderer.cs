@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.ViewEngines;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Routing;
 
-namespace Raud.Core.Features.Razor
+namespace IronBeard.Core.Features.Razor
 {
     public class RazorViewToStringRenderer
     {

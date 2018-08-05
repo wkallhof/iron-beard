@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Raud.Core.Features.FileSystem;
-using Raud.Core.Features.Shared;
+using IronBeard.Core.Features.FileSystem;
+using IronBeard.Core.Features.Shared;
 
-namespace Raud.Core.Features.Static
+namespace IronBeard.Core.Features.Static
 {
     public class StaticFileProcessor : IFileProcessor
     {

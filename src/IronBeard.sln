@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raud.Core", "Raud.Core\Raud.Core.csproj", "{FFDAD410-F41A-4183-A314-F482A77AC2A6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronBeard.Core", "IronBeard.Core\IronBeard.Core.csproj", "{FFDAD410-F41A-4183-A314-F482A77AC2A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raud.Tests", "Raud.Tests\Raud.Tests.csproj", "{B83ADDE2-BBDA-430E-AB23-7ED71159B695}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronBeard.Tests", "IronBeard.Tests\IronBeard.Tests.csproj", "{B83ADDE2-BBDA-430E-AB23-7ED71159B695}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Raud.Cli", "Raud.Cli\Raud.Cli.csproj", "{1B0F42CE-8AC2-4D8A-A9D4-DE619E14A9AC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IronBeard.Cli", "IronBeard.Cli\IronBeard.Cli.csproj", "{1B0F42CE-8AC2-4D8A-A9D4-DE619E14A9AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

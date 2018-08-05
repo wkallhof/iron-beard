@@ -14,8 +14,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Raud.Core\Raud.Core.csproj" />
-    <ProjectReference Include="..\Raud.Cli\Raud.Cli.csproj" />
+    <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
+    <ProjectReference Include="..\IronBeard.Cli\IronBeard.Cli.csproj" />
   </ItemGroup>
 
 </Project>

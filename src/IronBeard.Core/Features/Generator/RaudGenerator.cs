@@ -3,20 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using Raud.Core.Extensions;
-using Raud.Core.Features.FileSystem;
-using Raud.Core.Features.Shared;
+using IronBeard.Core.Extensions;
+using IronBeard.Core.Features.FileSystem;
+using IronBeard.Core.Features.Shared;
 
-namespace Raud.Core.Features.Generator
+namespace IronBeard.Core.Features.Generator
 {
-    public class RaudGenerator
+    public class IronBeardGenerator
     {
         private List<IFileProcessor> _fileProcessors;
         private IFileSystem _fileSystem;
         private string _inputDirectory;
         private string _outputDirectory;
 
-        public RaudGenerator(IFileSystem fileSystem, string inputDir, string outputDir){
+        public IronBeardGenerator(IFileSystem fileSystem, string inputDir, string outputDir){
             this._fileProcessors = new List<IFileProcessor>();
 
             if(fileSystem == null)

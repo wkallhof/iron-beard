@@ -1,6 +1,6 @@
-using Raud.Core.Extensions;
+using IronBeard.Core.Extensions;
 
-namespace Raud.Core.Features.Shared
+namespace IronBeard.Core.Features.Shared
 {
     public class ServiceResult
     {

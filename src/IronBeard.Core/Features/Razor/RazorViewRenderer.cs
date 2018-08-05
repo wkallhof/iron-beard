@@ -10,7 +10,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.ObjectPool;
 using Microsoft.Extensions.PlatformAbstractions;
 
-namespace Raud.Core.Features.Razor
+namespace IronBeard.Core.Features.Razor
 {
     public class RazorViewRenderer
     {

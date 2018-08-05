@@ -5,10 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
-using Raud.Core.Extensions;
-using Raud.Core.Features.Shared;
+using IronBeard.Core.Extensions;
+using IronBeard.Core.Features.Shared;
 
-namespace Raud.Core.Features.FileSystem
+namespace IronBeard.Core.Features.FileSystem
 {
     public interface IFileSystem
     {

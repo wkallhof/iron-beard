@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\Raud.Core\Raud.Core.csproj" />
+    <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

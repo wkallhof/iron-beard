@@ -1,4 +1,4 @@
-namespace Raud.Core.Extensions
+namespace IronBeard.Core.Extensions
 {
     public static class StringExtensions
     {

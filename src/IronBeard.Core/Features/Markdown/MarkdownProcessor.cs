@@ -5,7 +5,8 @@ using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Shared;
-
+using Markdig;
+using Markdig.Extensions.Yaml;
 
 namespace IronBeard.Core.Features.Markdown
 {
@@ -30,7 +31,13 @@ namespace IronBeard.Core.Features.Markdown
             if (!markdown.IsSet())
                 return null;
 
-            var html = Markdig.Markdown.ToHtml(markdown);
+
+            var pipeline = new MarkdownPipelineBuilder().UseAdvancedExtensions();
+            pipeline.Extensions.AddIfNotAlready<YamlFrontMatterExtension>();
+            var pipelineBuild = pipeline.Build();
+
+            var html = Markdig.Markdown.ToHtml(markdown, pipelineBuild);
+
             var output = OutputFile.FromInputFile(file);
             output.Content = html;
             output.Extension = ".html";

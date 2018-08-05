@@ -34,6 +34,17 @@ namespace Raud.Core.Features.Razor
             return (true, output);
         }
 
-        public Task ProcessOutputAsync(OutputFile file) => Task.CompletedTask;
+        public async Task ProcessOutputAsync(OutputFile file){
+            if(!file.Input.Extension.ToLower().Equals(".md"))
+                return;
+
+            var layoutTemplate = "@{ Layout = \"../Shared/_Layout.cshtml\"; }\n";
+            var html = layoutTemplate + file.Content;
+            var tempFile = await this._fileSystem.CreateTempFileAsync(html);
+
+            var relativeFile = tempFile.Replace(this._inputDirectory, "");
+            var razorHtml = await this._renderer.RenderAsync(relativeFile, "test");
+            file.Content = razorHtml;
+        }
     }
 }

@@ -41,11 +41,22 @@ namespace Raud.Core.Features.Generator
             Console.WriteLine("Clearing output directory");
             await this._fileSystem.DeleteDirectoryAsync(this._outputDirectory);
 
+            Console.WriteLine("Creating temp directory");
+            await this._fileSystem.CreateTempFolderAsync(this._inputDirectory);
+
+            Console.WriteLine("Loading files");
             var inputs = this._fileSystem.GetFiles(this._inputDirectory);
 
+            Console.WriteLine("Processing Inputs");
             var outputFiles = await this.ProcessInputs(inputs, this._outputDirectory);
+
+            Console.WriteLine("Processing Outputs");
             outputFiles = await this.ProcessOutputs(outputFiles);
 
+            Console.WriteLine("Deleting temp directory");
+            await this._fileSystem.DeleteTempFolderAsync();
+
+            Console.WriteLine("Writing files");
             await this._fileSystem.WriteOutputFilesAsync(outputFiles);
         }
 

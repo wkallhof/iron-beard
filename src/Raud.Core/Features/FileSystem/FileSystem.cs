@@ -17,10 +17,17 @@ namespace Raud.Core.Features.FileSystem
         Task WriteOutputFilesAsync(IEnumerable<OutputFile> files);
         Task WriteOutputFileAsync(OutputFile file);
         Task DeleteDirectoryAsync(string path);
+
+        Task<string> CreateTempFolderAsync(string basePath);
+        Task DeleteTempFolderAsync();
+        Task<string> CreateTempFileAsync(string content);
+
     }
 
     public class DiskFileSystem : IFileSystem
     {
+        private string _tempFolderPath;
+
         public IEnumerable<InputFile> GetFiles(string path)
         {
             var directory = new DirectoryInfo(path);
@@ -57,6 +64,36 @@ namespace Raud.Core.Features.FileSystem
             if(Directory.Exists(path))
                 Directory.Delete(path, recursive: true);
             return Task.CompletedTask;
+        }
+
+        public Task<string> CreateTempFolderAsync(string basePath)
+        {
+            this._tempFolderPath = Path.Combine(basePath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(this._tempFolderPath);
+            return Task.FromResult(this._tempFolderPath);
+        }
+
+        public async Task DeleteTempFolderAsync()
+        {
+            if(!this._tempFolderPath.IsSet())
+                return;
+
+            await this.DeleteDirectoryAsync(this._tempFolderPath);
+        }
+
+        public async Task<string> CreateTempFileAsync(string content)
+        {
+            if(!this._tempFolderPath.IsSet())
+                throw new Exception("Temp folder must be created before Temp file");
+
+            var filePath = Path.Combine(this._tempFolderPath, Guid.NewGuid().ToString() + ".tmp");
+            using (var writer = File.CreateText(filePath))
+            {
+                Console.WriteLine("Writing Temp File : " + filePath);
+                await writer.WriteLineAsync(content).ConfigureAwait(false);
+            }
+
+            return filePath;
         }
 
         private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){

@@ -29,7 +29,7 @@ namespace IronBeard.Cli
 
             var fileSystem = new DiskFileSystem();
 
-            var generator = new IronBeardGenerator(fileSystem, inputPath, outputPath);
+            var generator = new StaticGenerator(fileSystem, inputPath, outputPath);
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem));
             generator.AddProcessor(new RazorFileProcessor(fileSystem, inputPath));
             generator.AddProcessor(new StaticFileProcessor(ignore: new List<string> { ".cshtml", ".md", ".DS_Store" }));

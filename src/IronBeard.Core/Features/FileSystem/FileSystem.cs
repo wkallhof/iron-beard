@@ -21,13 +21,14 @@ namespace IronBeard.Core.Features.FileSystem
 
         Task<string> CreateTempFolderAsync(string basePath);
         Task DeleteTempFolderAsync();
-        Task<string> CreateTempFileAsync(string content);
+        Task<InputFile> CreateTempFileAsync(string content);
 
     }
 
     public class DiskFileSystem : IFileSystem
     {
         private string _tempFolderPath;
+        private string _tempFolderBase;
 
         public IEnumerable<InputFile> GetFiles(string path)
         {
@@ -83,6 +84,10 @@ namespace IronBeard.Core.Features.FileSystem
 
         public Task<string> CreateTempFolderAsync(string basePath)
         {
+            if(this._tempFolderBase.IsSet() && this._tempFolderPath.IsSet())
+                return Task.FromResult(this._tempFolderPath);
+
+            this._tempFolderBase = basePath;
             this._tempFolderPath = Path.Combine(basePath, Guid.NewGuid().ToString());
             Directory.CreateDirectory(this._tempFolderPath);
             return Task.FromResult(this._tempFolderPath);
@@ -96,7 +101,7 @@ namespace IronBeard.Core.Features.FileSystem
             await this.DeleteDirectoryAsync(this._tempFolderPath);
         }
 
-        public async Task<string> CreateTempFileAsync(string content)
+        public async Task<InputFile> CreateTempFileAsync(string content)
         {
             if(!this._tempFolderPath.IsSet())
                 throw new Exception("Temp folder must be created before Temp file");
@@ -107,7 +112,7 @@ namespace IronBeard.Core.Features.FileSystem
                 await writer.WriteLineAsync(content).ConfigureAwait(false);
             }
 
-            return filePath;
+            return this.MapFileInfoToInputFile(new FileInfo(filePath), this._tempFolderBase);
         }
 
         private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){
@@ -115,8 +120,7 @@ namespace IronBeard.Core.Features.FileSystem
             {
                 Name = Path.GetFileNameWithoutExtension(info.Name),
                 Extension = info.Extension,
-                FullDirectory = info.DirectoryName,
-                FullPath = info.FullName,
+                BaseDirectory = basePath,
                 RelativeDirectory = info.DirectoryName.Replace(basePath, "")
             };
         }

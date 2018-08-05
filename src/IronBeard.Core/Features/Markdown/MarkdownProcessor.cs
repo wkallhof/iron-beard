@@ -3,12 +3,13 @@ using System.IO;
 using System.Threading.Tasks;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.FileSystem;
+using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Shared;
 
 
 namespace IronBeard.Core.Features.Markdown
 {
-    public class MarkdownFileProcessor : IFileProcessor
+    public class MarkdownFileProcessor : IProcessor
     {
         private IFileSystem _fileSystem;
 
@@ -16,27 +17,28 @@ namespace IronBeard.Core.Features.Markdown
             this._fileSystem = fileSystem;
         }
 
-        public async Task<(bool processed, OutputFile file)> ProcessInputAsync(InputFile file, string outputDirectory)
+        public Task BeforeProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
+
+        public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
         {
             if (!file.Extension.ToLower().Equals(".md"))
-                return (false, null);
+                return null;
 
-            Console.WriteLine($"[Markdown] Processing Input: {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
+            Console.WriteLine($"[Markdown] Processing Input: {file.RelativePath}");
 
             var markdown = await this._fileSystem.ReadAllTextAsync(file.FullPath);
             if (!markdown.IsSet())
-                return (false, null);
+                return null;
 
             var html = Markdig.Markdown.ToHtml(markdown);
             var output = OutputFile.FromInputFile(file);
             output.Content = html;
             output.Extension = ".html";
-            output.FullDirectory = Path.GetFullPath(outputDirectory + output.RelativeDirectory);
-            output.FullPath = Path.Combine(output.FullDirectory, output.Name + output.Extension);
+            output.BaseDirectory = context.OutputDirectory;
 
-            return (true, output);
+            return output;
         }
 
-        public Task ProcessOutputAsync(OutputFile file) => Task.CompletedTask;
+        public Task AfterProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
     }
 }

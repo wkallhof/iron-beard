@@ -7,12 +7,12 @@ namespace IronBeard.Core.Features.FileSystem
         public bool DirectCopy { get; set; }
 
         public static OutputFile FromInputFile(InputFile file){
-            return new OutputFile() { 
-                Name = file.Name, 
-                Extension = file.Extension, 
-                FullDirectory = file.FullDirectory,
-                FullPath = file.FullPath,
+            return new OutputFile()
+            {
+                Name = file.Name,
+                Extension = file.Extension,
                 RelativeDirectory = file.RelativeDirectory,
+                BaseDirectory = file.BaseDirectory,
                 Input = file
             };
         }

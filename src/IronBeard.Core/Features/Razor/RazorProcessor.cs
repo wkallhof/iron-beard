@@ -28,36 +28,43 @@ namespace IronBeard.Core.Features.Razor
             return Task.CompletedTask;
         }
 
-        public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
+        public Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
         {
             // if this isn't CSHTML, or this is a Layout, or a partial, ignore
             if (!this.IsCshtmlFile(file) || context.Layout.Equals(file) || file.Name.StartsWith("_"))
-                return null;
+                return Task.FromResult<OutputFile>(null);
 
             Console.WriteLine($"[Razor] Processing Input : {file.RelativePath}");
 
-            var fileContent = await this._fileSystem.ReadAllTextAsync(file.FullPath);
-            if(!fileContent.IsSet())
-                return null;
-
-            var html = await this.CreateTempAndRender(fileContent, context);
-
             var output = OutputFile.FromInputFile(file);
-            output.Content = html;
             output.Extension = ".html";
             output.BaseDirectory = context.OutputDirectory;
 
-            return output;
+            return Task.FromResult(output);
         }
 
         public async Task AfterProcessAsync(OutputFile file, GeneratorContext context)
         {
-            if(!file.Input.Extension.ToLower().Equals(".md"))
+            if(file.Input.Extension.ToLower().Equals(".md"))
+                await this.ProcessMarkdown(file, context);
+
+            if(this.IsCshtmlFile(file.Input) && !context.Layout.Equals(file.Input) && !file.Input.Name.StartsWith("_"))
+                await this.ProcessRazor(file, context);
+        }
+
+        private async Task ProcessMarkdown(OutputFile file, GeneratorContext context){
+            Console.WriteLine($"[Razor] Processing Markdown Output : { file.RelativePath }");
+            file.Content = await this.CreateTempAndRender(file.Content, context);
+        }
+
+        private async Task ProcessRazor(OutputFile file, GeneratorContext context){
+            Console.WriteLine($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
+
+            var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);
+            if(!fileContent.IsSet())
                 return;
 
-            Console.WriteLine($"[Razor] Processing Output : { file.RelativePath }");
-
-            file.Content = await this.CreateTempAndRender(file.Content, context);
+            file.Content = await this.CreateTempAndRender(fileContent, context);
         }
 
         private async Task<string> CreateTempAndRender(string fileContent, GeneratorContext context){

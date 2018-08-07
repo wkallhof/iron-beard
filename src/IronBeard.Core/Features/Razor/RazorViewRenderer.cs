@@ -30,7 +30,6 @@ namespace IronBeard.Core.Features.Razor
                 Console.WriteLine(e.Message);
                 return null;
             }
-            
         }
 
         public void Setup(){

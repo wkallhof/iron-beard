@@ -8,7 +8,7 @@
 - [x] Static File Processor
 - [x] Razor Layout Support (wraps other razor files and markdown markup)
 - [x] Markdown metadata (YAML Frontmatter support in markdown)
-- [ ] Razor metadata
+- [x] Razor metadata
 - [ ] Global configuration file
 - [ ] URL correction (if needed)
 - [ ] CSS (Sass, etc.) Processor

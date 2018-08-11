@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
+using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Shared;
 
 namespace IronBeard.Core.Features.Static
@@ -12,8 +13,10 @@ namespace IronBeard.Core.Features.Static
     public class StaticFileProcessor : IProcessor
     {
         private List<string> _ignoreExtensions;
+        private ILogger _log;
 
-        public StaticFileProcessor(List<string> ignore){
+        public StaticFileProcessor(ILogger logger, List<string> ignore){
+            this._log = logger;
             this._ignoreExtensions = ignore.Select(x => x.ToLower()).ToList();
         }
 
@@ -24,7 +27,8 @@ namespace IronBeard.Core.Features.Static
             if(this._ignoreExtensions.Contains(file.Extension.ToLower()))
                 return Task.FromResult<OutputFile>(null);
 
-            //Console.WriteLine($"[Static] Processing Input: {file.RelativePath}");
+            this._log.Info($"[Static] Processing Input: {file.RelativePath}");
+
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;
             output.BaseDirectory = context.OutputDirectory;

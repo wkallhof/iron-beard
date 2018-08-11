@@ -5,7 +5,7 @@ using System.Threading;
 using IronBeard.Core.Extensions;
 using ColorConsole = Colorful.Console;
 
-namespace IronBeard.Cli
+namespace IronBeard.Cli.Features.Logging
 {
     /// <summary>
     /// An ASCII progress bar

@@ -5,16 +5,19 @@ using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Shared;
 using IronBeard.Core.Extensions;
+using IronBeard.Core.Features.Logging;
 
 namespace IronBeard.Core.Features.Razor
 {
     public class RazorFileProcessor : IProcessor
     {
         private IFileSystem _fileSystem;
+        private ILogger _log;
         private RazorViewRenderer _renderer;
 
-        public RazorFileProcessor(IFileSystem fileSystem, string inputDirectory){
+        public RazorFileProcessor(IFileSystem fileSystem, ILogger logger, string inputDirectory){
             this._fileSystem = fileSystem;
+            this._log = logger;
             this._renderer = new RazorViewRenderer(inputDirectory);
         }
 
@@ -34,7 +37,7 @@ namespace IronBeard.Core.Features.Razor
             if (!this.IsCshtmlFile(file) || context.Layout.Equals(file) || file.Name.StartsWith("_"))
                 return Task.FromResult<OutputFile>(null);
 
-            //Console.WriteLine($"[Razor] Processing Input : {file.RelativePath}");
+            this._log.Info($"[Razor] Processing Input : {file.RelativePath}");
 
             var output = OutputFile.FromInputFile(file);
             output.Extension = ".html";
@@ -53,24 +56,33 @@ namespace IronBeard.Core.Features.Razor
         }
 
         private async Task ProcessMarkdown(OutputFile file, GeneratorContext context){
-            //Console.WriteLine($"[Razor] Processing Markdown Output : { file.RelativePath }");
-            file.Content = await this.CreateTempAndRender(file.Content, context);
+            var viewContext = new ViewContext(file, context);
+            this._log.Info($"[Razor] Processing Markdown Output : { file.RelativePath }");
+            file.Content = await this.CreateTempAndRender(file.Content, file, context, viewContext);
         }
 
         private async Task ProcessRazor(OutputFile file, GeneratorContext context){
-            //Console.WriteLine($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
-
+            this._log.Info($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
+            var viewContext = new ViewContext(file, context);
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);
             if(!fileContent.IsSet())
                 return;
 
-            file.Content = await this.CreateTempAndRender(fileContent, context);
+            file.Content = await this.CreateTempAndRender(fileContent, file.Input, context, viewContext);
         }
 
-        private async Task<string> CreateTempAndRender(string fileContent, GeneratorContext context){
-            var html = this.AppendLayoutInfo(fileContent, context.Layout);
+        private async Task<string> CreateTempAndRender(string fileContent, InputFile file, GeneratorContext genContext, ViewContext viewContext){
+            var html = this.AppendLayoutInfo(fileContent, genContext.Layout);
             var tempFile = await this._fileSystem.CreateTempFileAsync(html);
-            return await this._renderer.RenderAsync(tempFile.RelativePath, context);  
+            try{
+                return await this._renderer.RenderAsync(tempFile.RelativePath, viewContext);
+            }
+            catch(Exception e)
+            {
+                var message = e.Message.Replace(tempFile.FullPath, file.FullPath);
+                this._log.Error(message);
+                return string.Empty;
+            }
         }
 
         private string AppendLayoutInfo(string fileContent, InputFile layout){

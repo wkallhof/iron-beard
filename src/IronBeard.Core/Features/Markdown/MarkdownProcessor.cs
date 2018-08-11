@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
+using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Shared;
 using Markdig;
 using Markdig.Extensions.Yaml;
@@ -15,9 +16,11 @@ namespace IronBeard.Core.Features.Markdown
     public class MarkdownFileProcessor : IProcessor
     {
         private IFileSystem _fileSystem;
+        private ILogger _log;
         private const string YAML_DEL = "---";
 
-        public MarkdownFileProcessor(IFileSystem fileSystem){
+        public MarkdownFileProcessor(IFileSystem fileSystem, ILogger logger){
+            this._log = logger;
             this._fileSystem = fileSystem;
         }
 
@@ -28,7 +31,7 @@ namespace IronBeard.Core.Features.Markdown
             if (!file.Extension.ToLower().Equals(".md"))
                 return null;
 
-            //Console.WriteLine($"[Markdown] Processing Input: {file.RelativePath}");
+            this._log.Info($"[Markdown] Processing Input: {file.RelativePath}");
 
             var markdown = await this._fileSystem.ReadAllTextAsync(file.FullPath);
             if (!markdown.IsSet())
@@ -67,7 +70,7 @@ namespace IronBeard.Core.Features.Markdown
                 metadata = deserializer.Deserialize<Dictionary<string, string>>(yamlString);
             }
             catch(Exception e){
-                //Console.WriteLine("Error parsing YAML metadata: " + e.Message);
+                this._log.Error("Error parsing YAML metadata: " + e.Message);
             }
 
             return (markdown, metadata);

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.FileProviders;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.Shared;
+using IronBeard.Core.Features.Logging;
 
 namespace IronBeard.Core.Features.FileSystem
 {
@@ -29,6 +30,11 @@ namespace IronBeard.Core.Features.FileSystem
     {
         private string _tempFolderPath;
         private string _tempFolderBase;
+        private ILogger _log;
+
+        public DiskFileSystem(ILogger logger){
+            this._log = logger;
+        }
 
         public IEnumerable<InputFile> GetFiles(string path)
         {

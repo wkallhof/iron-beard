@@ -2,6 +2,7 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using IronBeard.Core.Features.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
 using Microsoft.AspNetCore.Mvc.Razor;
@@ -23,13 +24,7 @@ namespace IronBeard.Core.Features.Razor
         }
 
         public async Task<string> RenderAsync<T>(string viewPath, T model ){
-            try{
-                return await this._renderer.RenderViewToStringAsync(viewPath, model);
-            }
-            catch(Exception e){
-                //Console.WriteLine(e.Message);
-                return null;
-            }
+            return await this._renderer.RenderViewToStringAsync(viewPath, model);
         }
 
         public void Setup(){

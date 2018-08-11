@@ -1,16 +1,7 @@
 @using System.Linq
 @model IronBeard.Core.Features.Generator.ViewContext
 
-@{
-    var pages = Model.All.Where(x => x.Metadata.ContainsKey("Title"));
-}
 
-@if(pages.Any())
-{
 <ul>
-    @foreach(var item in pages){
-        <li><a href="@item.RelativePath">@item.Metadata["Title"]</a></li>
-    }
-    
+    <li><a href="/articles">Articles</a></li>
 </ul>
-}

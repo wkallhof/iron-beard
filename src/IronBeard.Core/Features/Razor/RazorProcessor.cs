@@ -8,6 +8,8 @@ using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.Logging;
 using System.Collections.Generic;
 using YamlDotNet.Serialization;
+using IronBeard.Core.Features.Routing;
+using IronBeard.Core.Features.Configuration;
 
 namespace IronBeard.Core.Features.Razor
 {
@@ -29,7 +31,7 @@ namespace IronBeard.Core.Features.Razor
         {
             // set the layout if it is found
             //TODO: Consider how to support multiple layouts
-            if(this.IsCshtmlFile(file) && file.Name.Equals("_Layout", StringComparison.OrdinalIgnoreCase))
+            if(this.IsCshtmlFile(file) && file.Name.IgnoreCaseEquals(Config.LayoutFileName))
                 context.Layout = file;
 
             return Task.CompletedTask;
@@ -53,13 +55,14 @@ namespace IronBeard.Core.Features.Razor
             output.Extension = ".html";
             output.BaseDirectory = context.OutputDirectory;
             output.Metadata = metadata;
+            output.Url = UrlProvider.GetUrl(file);
 
             return output;
         }
 
         public async Task AfterProcessAsync(OutputFile file, GeneratorContext context)
         {
-            if(file.Input.Extension.ToLower().Equals(".md"))
+            if(file.Input.Extension.IgnoreCaseEquals(".md"))
                 await this.ProcessMarkdown(file, context);
 
             if(this.IsCshtmlFile(file.Input) && !context.Layout.Equals(file.Input) && !file.Input.Name.StartsWith("_"))
@@ -135,7 +138,7 @@ namespace IronBeard.Core.Features.Razor
         }
 
         private bool IsCshtmlFile(InputFile file){
-            return file.Extension.Equals(".cshtml", StringComparison.Ordinal);
+            return file.Extension.IgnoreCaseEquals(".cshtml");
         }
     }
 }

@@ -1,0 +1,21 @@
+@using System.Linq
+@model IronBeard.Core.Features.Generator.ViewContext
+
+@*META
+Title: Articles
+*@
+
+<h2>Articles</h2>
+
+@{
+    var articles = Model.Siblings.Where(x => x.Metadata.ContainsKey("Title"));
+}
+
+@if(articles.Any())
+{
+    <ul>
+        @foreach(var article in articles){
+            <li><a href="@article.Url">@article.Metadata["Title"]</a></li>
+        }
+    </ul>
+}

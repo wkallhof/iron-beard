@@ -8,6 +8,7 @@ namespace IronBeard.Core.Features.FileSystem
         public InputFile Input { get; set; }
         public bool DirectCopy { get; set; }
         public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
+        public string Url { get; set; }
 
         public static OutputFile FromInputFile(InputFile file){
             return new OutputFile()

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using IronBeard.Cli.Features.Logging;
 using IronBeard.Core.Features.FileSystem;
+using IronBeard.Core.Features.Formatting;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Markdown;
@@ -37,6 +38,7 @@ namespace IronBeard.Cli.Features.Commands
             generator.AddProcessor(new MarkdownFileProcessor(fileSystem, this._log));
             generator.AddProcessor(new RazorFileProcessor(fileSystem, this._log, inputPath));
             generator.AddProcessor(new StaticFileProcessor(this._log, ignore: new List<string> { ".cshtml", ".md", ".DS_Store" }));
+            generator.AddProcessor(new HtmlFormatProcessor(this._log));
 
             var startTime = DateTime.Now;
             await generator.Generate();

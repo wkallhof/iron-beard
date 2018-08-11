@@ -1,24 +1,19 @@
-@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @using System.Linq
 @model IronBeard.Core.Features.Generator.ViewContext
 
 @*META
-Title: Test Article
-Tags: Hello, This, Thing
+Title: Test Razor Article
+Tags: Bob Ross, Razor
 *@
 
-<partial name="../Shared/Partials/_Navigation.cshtml" />
+<h3>Test Razor Article</h3>
 
-@{
-    var articles = Model.All.Where(x => x.RelativePath.Contains("Articles") && x.Metadata.ContainsKey("Title"));
-}
+<p>Now we don't want him to get lonely, so we'll give him a little friend. Just use the old one inch brush. I thought today we would make a happy little stream that's just running through the woods here.</p>
 
-@if(articles.Any())
-{
-    <h5>Articles</h5>
-    <ul>
-        @foreach(var article in articles){
-            <li><a href="@article.RelativePath">@article.Metadata["Title"]</a></li>
-        }
-    </ul>
-}
+<p>Painting should do one thing. It should put happiness in your heart. I started painting as a hobby when I was little. I didn't know I had any talent. I believe talent is just a pursued interest. Anybody can do what I do. Fluff it up a little and hypnotize it.</p>
+
+<p>At home you have unlimited time. That's a crooked tree. We'll send him to Washington. Put your feelings into it, your heart, it's your world. Let the paint work. Trees grow however makes them happy. If you don't like it - change it. It's your world.</p>
+
+<p>We don't have anything but happy trees here. It's life. It's interesting. It's fun. The only prerequisite is that it makes you happy. If it makes you happy then it's good. Every time you practice, you learn more. You need the dark in order to show the light.</p>
+
+<p>Use absolutely no pressure. Just like an angel's wing. Paint anything you want on the canvas. Create your own world. Decide where your cloud lives. Maybe he lives right in here. Every single thing in the world has its own personality - and it is up to you to make friends with the little rascals. Even the worst thing we can do here is good.</p>

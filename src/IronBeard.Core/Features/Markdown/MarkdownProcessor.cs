@@ -6,6 +6,7 @@ using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
+using IronBeard.Core.Features.Routing;
 using IronBeard.Core.Features.Shared;
 using Markdig;
 using Markdig.Extensions.Yaml;
@@ -46,6 +47,7 @@ namespace IronBeard.Core.Features.Markdown
             output.Extension = ".html";
             output.BaseDirectory = context.OutputDirectory;
             output.Metadata = result.metadata;
+            output.Url = UrlProvider.GetUrl(file);
 
             return output;
         }

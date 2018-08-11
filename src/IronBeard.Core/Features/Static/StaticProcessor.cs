@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
+using IronBeard.Core.Features.Routing;
 using IronBeard.Core.Features.Shared;
 
 namespace IronBeard.Core.Features.Static
@@ -32,6 +33,8 @@ namespace IronBeard.Core.Features.Static
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;
             output.BaseDirectory = context.OutputDirectory;
+            output.Url = UrlProvider.GetUrlWithExtension(file);
+            
             return Task.FromResult(output);
         }
 

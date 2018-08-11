@@ -1,16 +1,17 @@
 @using System.Linq
+@using IronBeard.Core.Extensions
 @model IronBeard.Core.Features.Generator.ViewContext
 
 <h1>Home Page</h1>
 
 <span>Sitemap</span>
 @{
-    var allPages = Model.All.Where(x => x != Model.Current && x.Extension.Equals(".html", StringComparison.OrdinalIgnoreCase));
+    var allPages = Model.Children.Where(x => x.Extension.IgnoreCaseEquals(".html"));
 }
 
 <ul>
 @foreach(var item in allPages)
 {
-    <li><a href="@item.RelativePath">@item.RelativePath</a></li>
+    <li><a href="@item.Url">@item.Url</a></li>
 }
 </ul>

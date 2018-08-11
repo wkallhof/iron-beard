@@ -21,7 +21,7 @@ namespace IronBeard.Core.Features.Static
             this._ignoreExtensions = ignore.Select(x => x.ToLower()).ToList();
         }
 
-        public Task BeforeProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PreProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
 
         public Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
         {
@@ -34,10 +34,10 @@ namespace IronBeard.Core.Features.Static
             output.DirectCopy = true;
             output.BaseDirectory = context.OutputDirectory;
             output.Url = UrlProvider.GetUrlWithExtension(file);
-            
+
             return Task.FromResult(output);
         }
 
-        public Task AfterProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PostProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
     }
 }

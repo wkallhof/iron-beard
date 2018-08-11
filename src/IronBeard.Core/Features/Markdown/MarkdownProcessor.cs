@@ -25,7 +25,7 @@ namespace IronBeard.Core.Features.Markdown
             this._fileSystem = fileSystem;
         }
 
-        public Task BeforeProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PreProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
 
         public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
         {
@@ -78,6 +78,6 @@ namespace IronBeard.Core.Features.Markdown
             return (markdown, metadata);
         }
 
-        public Task AfterProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PostProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
     }
 }

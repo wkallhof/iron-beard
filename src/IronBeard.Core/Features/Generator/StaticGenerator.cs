@@ -52,14 +52,14 @@ namespace IronBeard.Core.Features.Generator
                 this._log.Progress(15, "Loading files...");
                 this._context.InputFiles = this._fileSystem.GetFiles(this._context.InputDirectory).ToList();
 
-                this._log.Progress(30, "Running Before Process...");
-                await this.RunBeforeProcess();
+                this._log.Progress(30, "Pre-Processing...");
+                await this.RunPreProcessing();
 
-                this._log.Progress(45, "Running Process...");
-                await this.RunProcess();
+                this._log.Progress(45, "Processing...");
+                await this.RunProcessing();
 
-                this._log.Progress(60, "Running After Process...");
-                await this.RunAfterProcess();
+                this._log.Progress(60, "Post-Processing...");
+                await this.RunPostProcessing();
 
                 this._log.Progress(75, "Writing files...");
                 await this._fileSystem.WriteOutputFilesAsync(this._context.OutputFiles);
@@ -71,13 +71,13 @@ namespace IronBeard.Core.Features.Generator
             }
         }
 
-        private async Task RunBeforeProcess(){
+        private async Task RunPreProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.InputFiles)
-                    await processor.BeforeProcessAsync(file, this._context);
+                    await processor.PreProcessAsync(file, this._context);
         }
 
-        private async Task RunProcess(){
+        private async Task RunProcessing(){
             var outputFiles = new Dictionary<string, OutputFile>();
             foreach(var processor in this._processors){
                 foreach(var file in this._context.InputFiles){
@@ -93,10 +93,10 @@ namespace IronBeard.Core.Features.Generator
             this._context.OutputFiles = outputFiles.Select(x => x.Value);
         }
 
-        private async Task RunAfterProcess(){
+        private async Task RunPostProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.OutputFiles)
-                    await processor.AfterProcessAsync(file, this._context);
+                    await processor.PostProcessAsync(file, this._context);
         }        
     }
 }

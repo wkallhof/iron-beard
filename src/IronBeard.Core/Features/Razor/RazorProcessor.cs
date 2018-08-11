@@ -27,7 +27,7 @@ namespace IronBeard.Core.Features.Razor
             this._renderer = new RazorViewRenderer(inputDirectory);
         }
 
-        public Task BeforeProcessAsync(InputFile file, GeneratorContext context)
+        public Task PreProcessAsync(InputFile file, GeneratorContext context)
         {
             // set the layout if it is found
             //TODO: Consider how to support multiple layouts
@@ -60,7 +60,7 @@ namespace IronBeard.Core.Features.Razor
             return output;
         }
 
-        public async Task AfterProcessAsync(OutputFile file, GeneratorContext context)
+        public async Task PostProcessAsync(OutputFile file, GeneratorContext context)
         {
             if(file.Input.Extension.IgnoreCaseEquals(".md"))
                 await this.ProcessMarkdown(file, context);

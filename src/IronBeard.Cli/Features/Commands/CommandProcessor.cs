@@ -26,7 +26,7 @@ namespace IronBeard.Cli.Features.Commands
             this._log.Info("IronBeard Generator -- Static Site Build");
 
             var inputArg = args.ElementAtOrDefault(0) ?? ".";
-            var outputArg = args.ElementAtOrDefault(1) ?? Path.Combine(inputArg, "output");
+            var outputArg = args.ElementAtOrDefault(1) ?? Path.Combine(inputArg, "www");
 
             var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, inputArg));
             var outputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, outputArg));

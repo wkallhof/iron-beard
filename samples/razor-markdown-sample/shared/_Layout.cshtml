@@ -1,0 +1,20 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model IronBeard.Core.Features.Generator.ViewContext
+
+<html>
+    <head>
+        <title>Site Title</title>
+
+        <link rel="stylesheet" type="text/css" href="./Assets/site.css">
+    </head>
+    <body>
+        <h1>Hello World</h1>
+
+        <nav>
+            <partial name="./Partials/_Navigation.cshtml" />
+        </nav>
+        @RenderBody()
+
+    </body>
+    
+</html>

@@ -1,0 +1,24 @@
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@using System.Linq
+@model IronBeard.Core.Features.Generator.ViewContext
+
+@*META
+Title: Test Article
+Tags: Hello, This, Thing
+*@
+
+<partial name="../Shared/Partials/_Navigation.cshtml" />
+
+@{
+    var articles = Model.All.Where(x => x.RelativePath.Contains("Articles") && x.Metadata.ContainsKey("Title"));
+}
+
+@if(articles.Any())
+{
+    <h5>Articles</h5>
+    <ul>
+        @foreach(var article in articles){
+            <li><a href="@article.RelativePath">@article.Metadata["Title"]</a></li>
+        }
+    </ul>
+}

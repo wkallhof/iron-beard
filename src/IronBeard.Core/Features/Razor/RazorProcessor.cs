@@ -6,6 +6,8 @@ using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Shared;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.Logging;
+using System.Collections.Generic;
+using YamlDotNet.Serialization;
 
 namespace IronBeard.Core.Features.Razor
 {
@@ -14,6 +16,8 @@ namespace IronBeard.Core.Features.Razor
         private IFileSystem _fileSystem;
         private ILogger _log;
         private RazorViewRenderer _renderer;
+        private const string YAML_DEL_START = "@*META";
+        private const string YAML_DEL_END = "*@";
 
         public RazorFileProcessor(IFileSystem fileSystem, ILogger logger, string inputDirectory){
             this._fileSystem = fileSystem;
@@ -31,19 +35,26 @@ namespace IronBeard.Core.Features.Razor
             return Task.CompletedTask;
         }
 
-        public Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
+        public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
         {
             // if this isn't CSHTML, or this is a Layout, or a partial, ignore
             if (!this.IsCshtmlFile(file) || context.Layout.Equals(file) || file.Name.StartsWith("_"))
-                return Task.FromResult<OutputFile>(null);
+                return null;
 
             this._log.Info($"[Razor] Processing Input : {file.RelativePath}");
+
+            var fileContent = await this._fileSystem.ReadAllTextAsync(file.FullPath);
+            if(!fileContent.IsSet())
+                return null;
+
+            var metadata = this.ExtractYamlMetadata(fileContent);
 
             var output = OutputFile.FromInputFile(file);
             output.Extension = ".html";
             output.BaseDirectory = context.OutputDirectory;
+            output.Metadata = metadata;
 
-            return Task.FromResult(output);
+            return output;
         }
 
         public async Task AfterProcessAsync(OutputFile file, GeneratorContext context)
@@ -93,6 +104,34 @@ namespace IronBeard.Core.Features.Razor
 
             var razorLayoutString = $"@{{ Layout = \"{ relativePath }\"; }}\n";
             return razorLayoutString + fileContent;
+        }
+
+        private Dictionary<string,string> ExtractYamlMetadata(string content){
+            var metadata = new Dictionary<string, string>();
+            if(!content.IsSet())
+                return metadata;
+
+            var startIndex = content.IndexOf(YAML_DEL_START);
+            if(startIndex < 0)
+                return metadata;
+
+            startIndex += YAML_DEL_START.Length;
+
+            var length = content.Substring(startIndex).IndexOf(YAML_DEL_END);
+            if(length < 0)
+                return metadata;
+
+            var yamlString = content.Substring(startIndex, length);
+
+            var deserializer = new DeserializerBuilder().Build();
+            try{
+                metadata = deserializer.Deserialize<Dictionary<string, string>>(yamlString);
+            }
+            catch(Exception e){
+                this._log.Error("Error parsing YAML metadata: " + e.Message);
+            }
+
+            return metadata;
         }
 
         private bool IsCshtmlFile(InputFile file){

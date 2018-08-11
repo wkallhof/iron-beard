@@ -27,7 +27,7 @@ namespace IronBeard.Core.Features.Razor
                 return await this._renderer.RenderViewToStringAsync(viewPath, model);
             }
             catch(Exception e){
-                Console.WriteLine(e.Message);
+                //Console.WriteLine(e.Message);
                 return null;
             }
         }

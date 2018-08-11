@@ -4,7 +4,12 @@
     <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Colorful.Console" Version="1.2.9" />
+  </ItemGroup>
+
   <PropertyGroup>
+    <AssemblyName>beard</AssemblyName>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.1</LangVersion> 

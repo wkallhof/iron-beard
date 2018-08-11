@@ -24,7 +24,7 @@ namespace IronBeard.Core.Features.Static
             if(this._ignoreExtensions.Contains(file.Extension.ToLower()))
                 return Task.FromResult<OutputFile>(null);
 
-            Console.WriteLine($"[Static] Processing Input: {file.RelativePath}");
+            //Console.WriteLine($"[Static] Processing Input: {file.RelativePath}");
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;
             output.BaseDirectory = context.OutputDirectory;

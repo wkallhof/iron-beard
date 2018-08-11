@@ -11,6 +11,10 @@ namespace IronBeard.Core.Features.Generator
 {
     public class StaticGenerator
     {
+        public event EventHandler OnProgress;
+        public event EventHandler OnError;
+        public event EventHandler OnInfo;
+
         private List<IProcessor> _processors;
         private IFileSystem _fileSystem;
         private GeneratorContext _context;
@@ -38,30 +42,32 @@ namespace IronBeard.Core.Features.Generator
                 if(!this._processors.Any())
                     throw new Exception("No processors added to generator.");
 
-                Console.WriteLine("Clearing output directory...");
+                this.LogInfo("Starting IronBeard...");
+
+                this.LogProgress(0, "Clearing output directory...");
                 await this._fileSystem.DeleteDirectoryAsync(this._context.OutputDirectory);
 
-                Console.WriteLine("Creating temp directory...");
+                this.LogProgress(5, "Creating temp directory...");
                 await this._fileSystem.CreateTempFolderAsync(this._context.InputDirectory);
 
-                Console.WriteLine("Loading files...");
+                this.LogProgress(15, "Loading files...");
                 this._context.InputFiles = this._fileSystem.GetFiles(this._context.InputDirectory).ToList();
 
-                Console.WriteLine("Running Before Process...");
+                this.LogProgress(30, "Running Before Process...");
                 await this.RunBeforeProcess();
 
-                Console.WriteLine("Running Process...");
+                this.LogProgress(45, "Running Process...");
                 await this.RunProcess();
 
-                Console.WriteLine("Running After Process...");
+                this.LogProgress(60, "Running After Process...");
                 await this.RunAfterProcess();
 
-                Console.WriteLine("Writing files...");
+                this.LogProgress(75, "Writing files...");
                 await this._fileSystem.WriteOutputFilesAsync(this._context.OutputFiles);
             }
             finally
             {
-                Console.WriteLine("Deleting temp directory...");
+                this.LogProgress(95, "Deleting temp directory...");
                 await this._fileSystem.DeleteTempFolderAsync();
             }
 
@@ -94,5 +100,26 @@ namespace IronBeard.Core.Features.Generator
                 foreach(var file in this._context.OutputFiles)
                     await processor.AfterProcessAsync(file, this._context);
         }
+
+        private void LogProgress(int percent, string message){
+            if(this.OnProgress == null)
+                return;
+            this.OnProgress(this, new OnProgressEventArgs(){ Percent = percent, Message = message});
+        }
+
+        private void LogError(string error){
+            if(this.OnError == null)
+                return;  
+            
+            this.OnProgress(this, new OnErrorEventArgs(){ Error = error});
+        }
+
+        private void LogInfo(string message){
+            if(this.OnInfo == null)
+                return;  
+            
+            this.OnInfo(this, new OnInfoEventArgs(){ Message = message});
+        }
+        
     }
 }

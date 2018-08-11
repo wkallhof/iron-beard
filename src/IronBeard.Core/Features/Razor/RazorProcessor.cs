@@ -34,7 +34,7 @@ namespace IronBeard.Core.Features.Razor
             if (!this.IsCshtmlFile(file) || context.Layout.Equals(file) || file.Name.StartsWith("_"))
                 return Task.FromResult<OutputFile>(null);
 
-            Console.WriteLine($"[Razor] Processing Input : {file.RelativePath}");
+            //Console.WriteLine($"[Razor] Processing Input : {file.RelativePath}");
 
             var output = OutputFile.FromInputFile(file);
             output.Extension = ".html";
@@ -53,12 +53,12 @@ namespace IronBeard.Core.Features.Razor
         }
 
         private async Task ProcessMarkdown(OutputFile file, GeneratorContext context){
-            Console.WriteLine($"[Razor] Processing Markdown Output : { file.RelativePath }");
+            //Console.WriteLine($"[Razor] Processing Markdown Output : { file.RelativePath }");
             file.Content = await this.CreateTempAndRender(file.Content, context);
         }
 
         private async Task ProcessRazor(OutputFile file, GeneratorContext context){
-            Console.WriteLine($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
+            //Console.WriteLine($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
 
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);
             if(!fileContent.IsSet())

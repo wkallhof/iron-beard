@@ -2,6 +2,8 @@ using System;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading.Tasks;
+using IronBeard.Core.Features.Configuration;
+using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Internal;
@@ -9,6 +11,7 @@ using Microsoft.AspNetCore.Mvc.Razor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.ObjectPool;
+using Microsoft.Extensions.Options;
 using Microsoft.Extensions.PlatformAbstractions;
 
 namespace IronBeard.Core.Features.Razor
@@ -18,8 +21,8 @@ namespace IronBeard.Core.Features.Razor
         private RazorViewToStringRenderer _renderer;
         private string _inputDirectory;
 
-        public RazorViewRenderer(string inputDirectory){
-            this._inputDirectory = inputDirectory;
+        public RazorViewRenderer(GeneratorContext context){
+            this._inputDirectory = context.InputDirectory;
             this.Setup();
         }
 

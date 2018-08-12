@@ -6,6 +6,8 @@
 
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
+    <PackageReference Include="EntryPoint" Version="1.2.3" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
   <PropertyGroup>

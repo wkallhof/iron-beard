@@ -14,20 +14,24 @@ using YamlDotNet.Serialization;
 
 namespace IronBeard.Core.Features.Markdown
 {
-    public class MarkdownFileProcessor : IProcessor
+    public class MarkdownProcessor : IProcessor
     {
         private IFileSystem _fileSystem;
+        private IUrlProvider _urlProvider;
+        private GeneratorContext _context;
         private ILogger _log;
         private const string YAML_DEL = "---";
 
-        public MarkdownFileProcessor(IFileSystem fileSystem, ILogger logger){
+        public MarkdownProcessor(IFileSystem fileSystem, ILogger logger, IUrlProvider urlProvider, GeneratorContext context){
             this._log = logger;
             this._fileSystem = fileSystem;
+            this._urlProvider = urlProvider;
+            this._context = context;
         }
 
-        public Task PreProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PreProcessAsync(InputFile file) => Task.CompletedTask;
 
-        public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
+        public async Task<OutputFile> ProcessAsync(InputFile file)
         {
             if (!file.Extension.ToLower().Equals(".md"))
                 return null;
@@ -45,9 +49,9 @@ namespace IronBeard.Core.Features.Markdown
             var output = OutputFile.FromInputFile(file);
             output.Content = html;
             output.Extension = ".html";
-            output.BaseDirectory = context.OutputDirectory;
+            output.BaseDirectory = this._context.OutputDirectory;
             output.Metadata = result.metadata;
-            output.Url = UrlProvider.GetUrl(file);
+            output.Url = this._urlProvider.GetUrl(file);
 
             return output;
         }
@@ -78,6 +82,6 @@ namespace IronBeard.Core.Features.Markdown
             return (markdown, metadata);
         }
 
-        public Task PostProcessAsync(OutputFile file, GeneratorContext context) => Task.CompletedTask;
+        public Task PostProcessAsync(OutputFile file) => Task.CompletedTask;
     }
 }

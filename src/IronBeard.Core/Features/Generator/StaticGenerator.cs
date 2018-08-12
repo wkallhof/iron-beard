@@ -17,21 +17,21 @@ namespace IronBeard.Core.Features.Generator
         private GeneratorContext _context;
         private ILogger _log;
 
-        public StaticGenerator(IFileSystem fileSystem, ILogger logger, string inputDir, string outputDir){
+        public StaticGenerator(IFileSystem fileSystem, ILogger logger, GeneratorContext context){
             this._log = logger;
             this._processors = new List<IProcessor>();
+            this._context = context;
 
             if(fileSystem == null)
                 throw new ArgumentException("File System not provided");
 
-            if(!inputDir.IsSet())
+            if(!context.InputDirectory.IsSet())
                 throw new ArgumentException("Input Directory not provided");
 
-            if(!outputDir.IsSet())
+            if(!context.OutputDirectory.IsSet())
                 throw new ArgumentException("Output Directory not provided");
 
             this._fileSystem = fileSystem;
-            this._context = new GeneratorContext(inputDir, outputDir);
         }
 
         public void AddProcessor(IProcessor processor) => this._processors.Add(processor);
@@ -74,14 +74,14 @@ namespace IronBeard.Core.Features.Generator
         private async Task RunPreProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.InputFiles)
-                    await processor.PreProcessAsync(file, this._context);
+                    await processor.PreProcessAsync(file);
         }
 
         private async Task RunProcessing(){
             var outputFiles = new Dictionary<string, OutputFile>();
             foreach(var processor in this._processors){
                 foreach(var file in this._context.InputFiles){
-                    var output = await processor.ProcessAsync(file, this._context);
+                    var output = await processor.ProcessAsync(file);
                     if(output == null)
                         continue;
 
@@ -96,7 +96,7 @@ namespace IronBeard.Core.Features.Generator
         private async Task RunPostProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.OutputFiles)
-                    await processor.PostProcessAsync(file, this._context);
+                    await processor.PostProcessAsync(file);
         }        
     }
 }

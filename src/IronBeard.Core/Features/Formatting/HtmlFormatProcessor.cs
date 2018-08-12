@@ -17,7 +17,7 @@ namespace IronBeard.Core.Features.Formatting
             this._log = logger;
         }
 
-        public Task PostProcessAsync(OutputFile file, GeneratorContext context)
+        public Task PostProcessAsync(OutputFile file)
         {
             if(!file.Extension.IgnoreCaseEquals(".html"))
                 return Task.CompletedTask;
@@ -35,7 +35,7 @@ namespace IronBeard.Core.Features.Formatting
             }
         }
 
-        public Task PreProcessAsync(InputFile file, GeneratorContext context) => Task.CompletedTask;
-        public Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context) => Task.FromResult<OutputFile>(null);
+        public Task PreProcessAsync(InputFile file) => Task.CompletedTask;
+        public Task<OutputFile> ProcessAsync(InputFile file) => Task.FromResult<OutputFile>(null);
     }
 }

@@ -6,8 +6,8 @@ namespace IronBeard.Core.Features.Shared
 {
     public interface IProcessor
     {
-        Task PreProcessAsync(InputFile file, GeneratorContext context);
-        Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context);
-        Task PostProcessAsync(OutputFile file, GeneratorContext context);
+        Task PreProcessAsync(InputFile file);
+        Task<OutputFile> ProcessAsync(InputFile file);
+        Task PostProcessAsync(OutputFile file);
     }
 }

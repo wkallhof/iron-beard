@@ -13,34 +13,41 @@ using IronBeard.Core.Features.Configuration;
 
 namespace IronBeard.Core.Features.Razor
 {
-    public class RazorFileProcessor : IProcessor
+    public class RazorProcessor : IProcessor
     {
+
         private IFileSystem _fileSystem;
         private ILogger _log;
+        private IUrlProvider _urlProvider;
+        private BeardConfig _config;
         private RazorViewRenderer _renderer;
+        private GeneratorContext _context;
+
         private const string YAML_DEL_START = "@*META";
         private const string YAML_DEL_END = "*@";
 
-        public RazorFileProcessor(IFileSystem fileSystem, ILogger logger, string inputDirectory){
+        public RazorProcessor(IFileSystem fileSystem, RazorViewRenderer renderer, 
+            ILogger logger, IUrlProvider urlProvider, BeardConfig config, GeneratorContext context){
             this._fileSystem = fileSystem;
             this._log = logger;
-            this._renderer = new RazorViewRenderer(inputDirectory);
+            this._urlProvider = urlProvider;
+            this._config = config;
+            this._renderer = renderer;
+            this._context = context;
         }
 
-        public Task PreProcessAsync(InputFile file, GeneratorContext context)
+        public Task PreProcessAsync(InputFile file)
         {
-            // set the layout if it is found
-            //TODO: Consider how to support multiple layouts
-            if(this.IsCshtmlFile(file) && file.Name.IgnoreCaseEquals(Config.LayoutFileName))
-                context.Layout = file;
+            if(this.IsCshtmlFile(file) && file.Name.IgnoreCaseEquals(this._config.LayoutFileName))
+                this._context.Layout = file;
 
             return Task.CompletedTask;
         }
 
-        public async Task<OutputFile> ProcessAsync(InputFile file, GeneratorContext context)
+        public async Task<OutputFile> ProcessAsync(InputFile file)
         {
             // if this isn't CSHTML, or this is a Layout, or a partial, ignore
-            if (!this.IsCshtmlFile(file) || context.Layout.Equals(file) || file.Name.StartsWith("_"))
+            if (!this.IsCshtmlFile(file) || this._context.Layout.Equals(file) || file.Name.StartsWith("_"))
                 return null;
 
             this._log.Info($"[Razor] Processing Input : {file.RelativePath}");
@@ -53,40 +60,45 @@ namespace IronBeard.Core.Features.Razor
 
             var output = OutputFile.FromInputFile(file);
             output.Extension = ".html";
-            output.BaseDirectory = context.OutputDirectory;
+            output.BaseDirectory = this._context.OutputDirectory;
             output.Metadata = metadata;
-            output.Url = UrlProvider.GetUrl(file);
+            output.Url = this._urlProvider.GetUrl(file);
 
             return output;
         }
 
-        public async Task PostProcessAsync(OutputFile file, GeneratorContext context)
+        public async Task PostProcessAsync(OutputFile file)
         {
             if(file.Input.Extension.IgnoreCaseEquals(".md"))
-                await this.ProcessMarkdown(file, context);
+                await this.ProcessMarkdown(file);
 
-            if(this.IsCshtmlFile(file.Input) && !context.Layout.Equals(file.Input) && !file.Input.Name.StartsWith("_"))
-                await this.ProcessRazor(file, context);
+            if(this.IsCshtmlFile(file.Input) && !this._context.Layout.Equals(file.Input) && !file.Input.Name.StartsWith("_"))
+                await this.ProcessRazor(file);
         }
 
-        private async Task ProcessMarkdown(OutputFile file, GeneratorContext context){
-            var viewContext = new ViewContext(file, context);
+        private async Task ProcessMarkdown(OutputFile file){
+            var viewContext = new ViewContext(file, this._context);
             this._log.Info($"[Razor] Processing Markdown Output : { file.RelativePath }");
-            file.Content = await this.CreateTempAndRender(file.Content, file, context, viewContext);
+            file.Content = await this.CreateTempAndRender(file.Content, file, viewContext);
         }
 
-        private async Task ProcessRazor(OutputFile file, GeneratorContext context){
+        private async Task ProcessRazor(OutputFile file){
             this._log.Info($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
-            var viewContext = new ViewContext(file, context);
+            var viewContext = new ViewContext(file, this._context);
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);
             if(!fileContent.IsSet())
                 return;
 
-            file.Content = await this.CreateTempAndRender(fileContent, file.Input, context, viewContext);
+            file.Content = await this.CreateTempAndRender(fileContent, file.Input, viewContext);
         }
 
-        private async Task<string> CreateTempAndRender(string fileContent, InputFile file, GeneratorContext genContext, ViewContext viewContext){
-            var html = this.AppendLayoutInfo(fileContent, genContext.Layout);
+        private async Task<string> CreateTempAndRender(string fileContent, InputFile file, ViewContext viewContext){
+            if(this._renderer == null){
+                this._log.Fatal("[Razor] Renderer has not been initialized. Must call InitializeViewRenderer before processing");
+                return string.Empty;
+            }
+
+            var html = this.AppendLayoutInfo(fileContent, this._context.Layout);
             var tempFile = await this._fileSystem.CreateTempFileAsync(html);
             try{
                 return await this._renderer.RenderAsync(tempFile.RelativePath, viewContext);

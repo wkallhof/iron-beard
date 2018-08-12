@@ -1,5 +1,5 @@
 # IronBeard
-.NET Core static site generator
+A cross-platform static site generator built with .NET Core.
 
 ## Features
 - [x] Support for recursive folder and file structures

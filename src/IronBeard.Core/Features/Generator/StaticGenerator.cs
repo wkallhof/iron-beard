@@ -41,32 +41,32 @@ namespace IronBeard.Core.Features.Generator
                 if(!this._processors.Any())
                     throw new Exception("No processors added to generator.");
 
-                this._log.Info("Starting IronBeard...");
+                this._log.Info<StaticGenerator>("Starting IronBeard...");
 
-                this._log.Progress(0, "Clearing output directory...");
+                this._log.Info<StaticGenerator>("Clearing output directory...");
                 await this._fileSystem.DeleteDirectoryAsync(this._context.OutputDirectory);
 
-                this._log.Progress(5, "Creating temp directory...");
+                this._log.Info<StaticGenerator>("Creating temp directory...");
                 await this._fileSystem.CreateTempFolderAsync(this._context.InputDirectory);
 
-                this._log.Progress(15, "Loading files...");
+                this._log.Info<StaticGenerator>("Loading files...");
                 this._context.InputFiles = this._fileSystem.GetFiles(this._context.InputDirectory).ToList();
 
-                this._log.Progress(30, "Pre-Processing...");
+                this._log.Info<StaticGenerator>("Pre-Processing...");
                 await this.RunPreProcessing();
 
-                this._log.Progress(45, "Processing...");
+                this._log.Info<StaticGenerator>("Processing...");
                 await this.RunProcessing();
 
-                this._log.Progress(60, "Post-Processing...");
+                this._log.Info<StaticGenerator>("Post-Processing...");
                 await this.RunPostProcessing();
 
-                this._log.Progress(75, "Writing files...");
+                this._log.Info<StaticGenerator>("Writing files...");
                 await this._fileSystem.WriteOutputFilesAsync(this._context.OutputFiles);
             }
             finally
             {
-                this._log.Progress(95, "Deleting temp directory...");
+                this._log.Info<StaticGenerator>("Deleting temp directory...");
                 await this._fileSystem.DeleteTempFolderAsync();
             }
         }

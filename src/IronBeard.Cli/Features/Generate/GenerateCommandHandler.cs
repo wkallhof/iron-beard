@@ -45,10 +45,11 @@ namespace IronBeard.Cli.Features.Generate
             generator.AddProcessor(services.GetService<HtmlFormatProcessor>());
 
             try{
+                logger.Ascii("Iron Beard");
                 await generator.Generate();
             }
             catch(Exception e){
-                logger.Fatal(e.Message);
+                logger.Fatal<GenerateCommandHandler>(e.Message);
             }
         }
 
@@ -73,7 +74,7 @@ namespace IronBeard.Cli.Features.Generate
             services.AddSingleton<RazorProcessor>();
             services.AddSingleton<StaticProcessor>();
             services.AddSingleton<HtmlFormatProcessor>();
-            services.AddSingleton<ILogger, ProgressBarLogger>();
+            services.AddSingleton<ILogger, ConsoleLogger>();
             services.AddSingleton<IFileSystem, DiskFileSystem>();
             services.AddTransient<IUrlProvider, UrlProvider>();
             services.AddSingleton<RazorViewRenderer>();

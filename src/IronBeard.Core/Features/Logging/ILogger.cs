@@ -2,10 +2,10 @@ namespace IronBeard.Core.Features.Logging
 {
     public interface ILogger
     {
-        void Info(string message);
-        void Warn(string message);
-        void Error(string message);
-        void Fatal(string message);
-        void Progress(int percent, string message);
+        void Ascii(string message);
+        void Info<T>(string message);
+        void Warn<T>(string message);
+        void Error<T>(string message);
+        void Fatal<T>(string message);
     }
 }

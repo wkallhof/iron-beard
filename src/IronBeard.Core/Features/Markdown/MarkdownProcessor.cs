@@ -36,7 +36,7 @@ namespace IronBeard.Core.Features.Markdown
             if (!file.Extension.ToLower().Equals(".md"))
                 return null;
 
-            this._log.Info($"[Markdown] Processing Input: {file.RelativePath}");
+            this._log.Info<MarkdownProcessor>($"Processing Input: {file.RelativePath}");
 
             var markdown = await this._fileSystem.ReadAllTextAsync(file.FullPath);
             if (!markdown.IsSet())
@@ -76,7 +76,7 @@ namespace IronBeard.Core.Features.Markdown
                 metadata = deserializer.Deserialize<Dictionary<string, string>>(yamlString);
             }
             catch(Exception e){
-                this._log.Error("Error parsing YAML metadata: " + e.Message);
+                this._log.Error<MarkdownProcessor>("Error parsing YAML metadata: " + e.Message);
             }
 
             return (markdown, metadata);

@@ -68,7 +68,7 @@ namespace IronBeard.Core.Features.FileSystem
             Directory.CreateDirectory(file.FullDirectory);
             using (var writer = File.CreateText(file.FullPath))
             {
-                //Console.WriteLine($"Writing Output File : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
+                this._log.Info<DiskFileSystem>($"Writing Output File : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
                 await writer.WriteLineAsync(file.Content).ConfigureAwait(false);
             } 
         }

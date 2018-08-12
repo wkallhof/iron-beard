@@ -50,7 +50,7 @@ namespace IronBeard.Core.Features.Razor
             if (!this.IsCshtmlFile(file) || this._context.Layout.Equals(file) || file.Name.StartsWith("_"))
                 return null;
 
-            this._log.Info($"[Razor] Processing Input : {file.RelativePath}");
+            this._log.Info<RazorProcessor>($"Processing Input : {file.RelativePath}");
 
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.FullPath);
             if(!fileContent.IsSet())
@@ -78,12 +78,12 @@ namespace IronBeard.Core.Features.Razor
 
         private async Task ProcessMarkdown(OutputFile file){
             var viewContext = new ViewContext(file, this._context);
-            this._log.Info($"[Razor] Processing Markdown Output : { file.RelativePath }");
+            this._log.Info<RazorProcessor>($"Processing Markdown Output : { file.RelativePath }");
             file.Content = await this.CreateTempAndRender(file.Content, file, viewContext);
         }
 
         private async Task ProcessRazor(OutputFile file){
-            this._log.Info($"[Razor] Processing Razor Output : { file.Input.RelativePath }");
+            this._log.Info<RazorProcessor>($"Processing Razor Output : { file.Input.RelativePath }");
             var viewContext = new ViewContext(file, this._context);
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);
             if(!fileContent.IsSet())
@@ -94,7 +94,7 @@ namespace IronBeard.Core.Features.Razor
 
         private async Task<string> CreateTempAndRender(string fileContent, InputFile file, ViewContext viewContext){
             if(this._renderer == null){
-                this._log.Fatal("[Razor] Renderer has not been initialized. Must call InitializeViewRenderer before processing");
+                this._log.Fatal<RazorProcessor>("Renderer has not been initialized. Must call InitializeViewRenderer before processing");
                 return string.Empty;
             }
 
@@ -106,7 +106,7 @@ namespace IronBeard.Core.Features.Razor
             catch(Exception e)
             {
                 var message = e.Message.Replace(tempFile.FullPath, file.FullPath);
-                this._log.Error(message);
+                this._log.Error<RazorProcessor>(message);
                 return string.Empty;
             }
         }
@@ -143,7 +143,7 @@ namespace IronBeard.Core.Features.Razor
                 metadata = deserializer.Deserialize<Dictionary<string, string>>(yamlString);
             }
             catch(Exception e){
-                this._log.Error("Error parsing YAML metadata: " + e.Message);
+                this._log.Error<RazorProcessor>("Error parsing YAML metadata: " + e.Message);
             }
 
             return metadata;

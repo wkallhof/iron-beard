@@ -34,7 +34,7 @@ namespace IronBeard.Core.Features.Static
             if(this._ignoreExtensions.Contains(file.Extension.ToLower()))
                 return Task.FromResult<OutputFile>(null);
 
-            this._log.Info($"[Static] Processing Input: {file.RelativePath}");
+            this._log.Info<StaticProcessor>($"Processing Input: {file.RelativePath}");
 
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;

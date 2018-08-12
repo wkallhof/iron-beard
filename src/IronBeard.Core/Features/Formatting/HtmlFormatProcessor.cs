@@ -22,7 +22,7 @@ namespace IronBeard.Core.Features.Formatting
             if(!file.Extension.IgnoreCaseEquals(".html"))
                 return Task.CompletedTask;
 
-            this._log.Info("[HTML FORMATTER] Formatting " + file.RelativePath);
+            this._log.Info<HtmlFormatProcessor>("Formatting " + file.RelativePath);
             try
             {
                 file.Content = XElement.Parse(file.Content).ToString();
@@ -30,7 +30,7 @@ namespace IronBeard.Core.Features.Formatting
             }
             catch(Exception e)
             {
-                this._log.Warn($"[HTML FORMATTER] {file.RelativePath} isn't well formed XML / HTML : {e.Message}");
+                this._log.Warn<HtmlFormatProcessor>($"{file.RelativePath} isn't well formed XML / HTML : {e.Message}");
                 return Task.CompletedTask;
             }
         }

@@ -11,9 +11,9 @@
 - [x] Razor metadata (YAML Frontmatter support with Razor comments)
 - [x] HTML Formatting to clean up file output. 
 - [x] URL correction (properly handles relative routes and root folder routing (index.html etc.))
-- [X] Global configuration file
-- [ ] Rich CLI output
-- [ ] CSS (Sass, etc.) Processor
+- [x] Global configuration file
+- [x] Rich CLI output
+- [ ] Valid system errors codes (useful for automation)
 - [ ] Project Scaffolding
 - [ ] Static Web Server
 

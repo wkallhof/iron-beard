@@ -1,5 +1,7 @@
 # IronBeard
-A cross-platform static site generator built with .NET Core.
+[![Build status](https://ci.appveyor.com/api/projects/status/xf9ra9257yclw3gg/branch/master?svg=true)](https://ci.appveyor.com/project/wkallhof/iron-beard/branch/master)
+
+A simple and easy to use cross-platform static site generator built with .NET Core
 
 ## Features
 - [x] Support for recursive folder and file structures

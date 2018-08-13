@@ -13,9 +13,11 @@
   <PropertyGroup>
     <AssemblyName>beard</AssemblyName>
     <OutputType>Exe</OutputType>
+    <Version>0.0.0.0-dev</Version>
     <TargetFramework>netcoreapp2.1</TargetFramework>
     <LangVersion>7.1</LangVersion> 
     <PreserveCompilationContext>true</PreserveCompilationContext>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
   </PropertyGroup>
 
 </Project>

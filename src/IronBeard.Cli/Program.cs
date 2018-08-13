@@ -3,16 +3,12 @@
 using System;
 using System.Threading.Tasks;
 using IronBeard.Cli.Features.Commands;
-using EntryCli = EntryPoint.Cli;
+using McMaster.Extensions.CommandLineUtils;
 
 namespace IronBeard.Cli
 {
     class Program
     {
-        static void Main(string[] args)
-        {
-            EntryCli.Execute<BeardCommands>(args);
-            Console.WriteLine("Exiting");
-        }
+        public static Task<int> Main(string[] args) => CommandLineApplication.ExecuteAsync<BeardCommand>(args);
     }
 }

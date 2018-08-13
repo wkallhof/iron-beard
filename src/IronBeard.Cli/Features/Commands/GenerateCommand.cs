@@ -1,33 +1,37 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using IronBeard.Cli.Features.Logging;
 using IronBeard.Core.Features.Configuration;
+using IronBeard.Core.Features.Generator;
+using IronBeard.Cli.Features.Logging;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Formatting;
-using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Markdown;
 using IronBeard.Core.Features.Razor;
 using IronBeard.Core.Features.Routing;
 using IronBeard.Core.Features.Static;
+using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
-using EntryCli = EntryPoint.Cli;
+using System.IO;
 
-namespace IronBeard.Cli.Features.Generate
+namespace IronBeard.Cli.Features.Commands
 {
-    public class GenerateCommandHandler
+    [Command(Description = "Generates a static site from the files in the given directory", ThrowOnUnexpectedArgument = false)]
+    public class GenerateCommand
     {
-        public async Task Handle(string[] args){
+        [Option("-i|--input <PATH>", "Provide the root directory where Iron Beard should look for files to generate a static site from.", CommandOptionType.SingleValue)]
+        [DirectoryExists]
+        public string InputDirectory { get; set; } = ".";
 
-            // process arguments
-            var arguments = EntryCli.Parse<GenerateCommandArguments>(args);
-            
+        [Option("-o|--output <PATH>", "Provide the directory where Iron Beard should write the static site to.", CommandOptionType.SingleValue)]
+        public string OutputDirectory { get; set; }
+
+        public async Task<int> OnExecuteAsync(CommandLineApplication app)
+        {
             // normalize inputs
-            var inputArg = arguments.InputDirectory;
-            var outputArg = arguments.OutputDirectory ?? Path.Combine(inputArg, "www");
+            var inputArg = InputDirectory;
+            var outputArg = OutputDirectory ?? Path.Combine(inputArg, "www");
 
             var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, inputArg));
             var outputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, outputArg));
@@ -47,9 +51,11 @@ namespace IronBeard.Cli.Features.Generate
             try{
                 logger.Ascii("Iron Beard");
                 await generator.Generate();
+                return 0;
             }
             catch(Exception e){
-                logger.Fatal<GenerateCommandHandler>(e.Message);
+                logger.Fatal<GenerateCommand>(e.Message);
+                return 1;
             }
         }
 

@@ -1,7 +1,6 @@
 using System;
 using System.Reflection;
 using System.Threading.Tasks;
-using IronBeard.Cli.Features.Generate;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace IronBeard.Cli.Features.Commands

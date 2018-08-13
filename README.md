@@ -13,7 +13,7 @@ A cross-platform static site generator built with .NET Core.
 - [x] URL correction (properly handles relative routes and root folder routing (index.html etc.))
 - [x] Global configuration file
 - [x] Rich CLI output
-- [ ] Valid system errors codes (useful for automation)
+- [x] Valid system errors codes (useful for automation)
 - [ ] Project Scaffolding
 - [ ] Static Web Server
 

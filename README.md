@@ -1,5 +1,10 @@
 # IronBeard
-[![Build status](https://ci.appveyor.com/api/projects/status/xf9ra9257yclw3gg/branch/master?svg=true)](https://ci.appveyor.com/project/wkallhof/iron-beard/branch/master)
+[![NuGet][nuget-badge]][nuget] [![Build status][appveyor-badge]][appveyor] 
+
+[nuget]: https://www.nuget.org/packages/IronBeard/
+[nuget-badge]: https://img.shields.io/nuget/v/IronBeard.svg?style=flat-square&label=nuget
+[appveyor]: https://ci.appveyor.com/project/wkallhof/iron-beard/branch/master
+[appveyor-badge]: https://ci.appveyor.com/api/projects/status/xf9ra9257yclw3gg/branch/master?svg=true
 
 A simple and easy to use cross-platform static site generator built with .NET Core
 
@@ -19,4 +24,61 @@ A simple and easy to use cross-platform static site generator built with .NET Co
 - [x] Watch command for automatic rebuilding on file or directory change
 - [ ] Project Scaffolding
 - [ ] Static Web Server
+
+
+## Get started
+
+Download the [.NET Core 2.1 SDK](https://aka.ms/DotNetCore21) or newer.
+Once installed, run this command:
+
+```
+dotnet tool install --global IronBeard
+```
+
+The simplest way to build a static site is by running the following in your project directory
+
+```
+beard
+```
+
+It will generate a `www` folder in your current directory with the static site files
+
+## Usage
+
+```
+Usage: beard [options] [command]
+
+Options:
+  --version     Show version information
+  -?|-h|--help  Show help information
+
+Commands:
+  generate      Generates a static site from the files in the given directory
+  watch         Watch a directory for changes and rebuild automatically
+```
+
+## Generate
+
+```
+Generates a static site from the files in the given directory
+
+Usage: beard generate [options]
+
+Options:
+  -i|--input <PATH>   Provide the root directory where Iron Beard should look for files to generate a static site from.
+  -o|--output <PATH>  Provide the directory where Iron Beard should write the static site to.
+  -?|-h|--help        Show help information
+```
+
+## Watch
+```
+Watch a directory for changes and rebuild automatically
+
+Usage: beard watch [options]
+
+Options:
+  -i|--input <PATH>   Provide the root directory where Iron Beard should look for files to generate a static site from.
+  -o|--output <PATH>  Provide the directory where Iron Beard should write the static site to.
+  -?|-h|--help        Show help information
+```
 

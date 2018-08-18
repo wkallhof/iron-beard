@@ -34,6 +34,7 @@ Once installed, run this command:
 ```
 dotnet tool install --global IronBeard
 ```
+This will install the `beard` command globally on your machine.
 
 The simplest way to build a static site is by running the following in your project directory
 

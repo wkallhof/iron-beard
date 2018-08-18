@@ -8,6 +8,7 @@ namespace IronBeard.Cli.Features.Commands
     [Command("beard", ThrowOnUnexpectedArgument = false)]
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
     [Subcommand("generate", typeof(GenerateCommand))]
+    [Subcommand("watch", typeof(WatchCommand))]
     [Subcommand("server", typeof(ServerCommand))]
     [Subcommand("init", typeof(InitCommand))]
     public class BeardCommand

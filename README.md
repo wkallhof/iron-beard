@@ -16,6 +16,7 @@ A simple and easy to use cross-platform static site generator built with .NET Co
 - [x] Global configuration file
 - [x] Rich CLI output
 - [x] Valid system errors codes (useful for automation)
+- [x] Watch command for automatic rebuilding on file or directory change
 - [ ] Project Scaffolding
 - [ ] Static Web Server
 

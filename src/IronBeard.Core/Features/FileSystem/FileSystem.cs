@@ -8,6 +8,7 @@ using Microsoft.Extensions.FileProviders;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.Shared;
 using IronBeard.Core.Features.Logging;
+using IronBeard.Core.Features.Configuration;
 
 namespace IronBeard.Core.Features.FileSystem
 {
@@ -31,9 +32,11 @@ namespace IronBeard.Core.Features.FileSystem
         private string _tempFolderPath;
         private string _tempFolderBase;
         private ILogger _log;
+        private BeardConfig _config;
 
-        public DiskFileSystem(ILogger logger){
+        public DiskFileSystem(ILogger logger, BeardConfig config){
             this._log = logger;
+            this._config = config;
         }
 
         public IEnumerable<InputFile> GetFiles(string path)
@@ -60,6 +63,10 @@ namespace IronBeard.Core.Features.FileSystem
         }
 
         public async Task WriteOutputFileAsync(OutputFile file){
+
+            if(this._config.ExcludeHtmlExtension && file.Extension.IgnoreCaseEquals(".html") && !file.Name.Equals(this._config.IndexFileName))
+                file.Extension = string.Empty;
+
             if(file.DirectCopy){
                 await this.CopyOutputFileAsync(file);
                 return;
@@ -124,7 +131,7 @@ namespace IronBeard.Core.Features.FileSystem
         private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){
             if(basePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
                 basePath = basePath.Substring(0, basePath.Length - 1);
-                
+
             return new InputFile()
             {
                 Name = Path.GetFileNameWithoutExtension(info.Name),

@@ -26,13 +26,12 @@ namespace IronBeard.Core.Features.Formatting
             try
             {
                 file.Content = XElement.Parse(file.Content).ToString();
-                return Task.CompletedTask;
             }
             catch(Exception e)
             {
                 this._log.Warn<HtmlFormatProcessor>($"{file.RelativePath} isn't well formed XML / HTML : {e.Message}");
-                return Task.CompletedTask;
             }
+            return Task.CompletedTask;
         }
 
         public Task PreProcessAsync(InputFile file) => Task.CompletedTask;

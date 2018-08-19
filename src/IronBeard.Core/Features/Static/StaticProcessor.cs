@@ -39,7 +39,7 @@ namespace IronBeard.Core.Features.Static
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;
             output.BaseDirectory = this._context.OutputDirectory;
-            output.Url = this._urlProvider.GetUrlWithExtension(file);
+            output.Url = this._urlProvider.GetUrl(file);
 
             return Task.FromResult(output);
         }

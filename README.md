@@ -127,7 +127,8 @@ The default configuration is as follows:
         "SiteTitle" : "Razor Markdown Sample",
         "IndexFileName" : "index",
         "LayoutFileName" : "_Layout",
-        "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ]
+        "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ],
+        "ExcludeHtmlExtension": true
     }
 }
 ```
@@ -139,6 +140,8 @@ The default configuration is as follows:
 * `LayoutFileName` : This is the layout file used to wrap your `.cshtml` and `.md` files. IronBeard will look for this file to determine the layout to use.
 
 * `StaticExtensionIgnoreList` : This array should hold the list of extensions you want the static processor to ignore. If it is _not_ in this list, the files will be copied into the output directory.
+
+* `ExcludeHtmlExtension` : Defaults to `true`, this will not write out the `.html` extension for your generated HTML pages. This provides cleaner routing : `/articles/article` vs `/articles/article.html`. Special work may need to be done to ensure your static host sets the correct `content-type` for your uploaded files to `text/html`. Some rely on the extension to determine this, which these html files will not have. Setting this to true will write out the `.html` extensions as well as update the `Url` property to include the extension so you can navigate your static site locally without the use of a static file server.
 
 ## ViewContext
 

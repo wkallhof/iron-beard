@@ -8,5 +8,6 @@ namespace IronBeard.Core.Features.Configuration
         public string IndexFileName { get; set; } = "Index";
         public string LayoutFileName { get; set; } = "_Layout";
         public List<string> StaticExtensionIgnoreList { get; set; } = new List<string> { ".cshtml", ".md", ".DS_Store", ".json" };
+        public bool ExcludeHtmlExtension { get; set; } = true;
     }
 }

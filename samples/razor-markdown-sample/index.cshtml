@@ -4,13 +4,10 @@
 
 <h1>Home Page</h1>
 
-<span>Sitemap</span>
-@{
-    var allPages = Model.Children.Where(x => x.Extension.IgnoreCaseEquals(".html"));
-}
+<span>All Content</span>
 
 <ul>
-@foreach(var item in allPages)
+@foreach(var item in Model.Children)
 {
     <li><a href="@item.Url">@item.Url</a></li>
 }

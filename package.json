@@ -5,6 +5,7 @@
   "scripts": {
       "restore": "dotnet restore ./src/IronBeard.sln",
       "build": "dotnet build ./src/IronBeard.sln",
+      "watch": "cd src/IronBeard.Cli && dotnet run -- watch -i ../../samples/razor-markdown-sample",
       "example": "cd src/IronBeard.Cli && dotnet run -- generate -i ../../samples/razor-markdown-sample"
   },
   "repository": {

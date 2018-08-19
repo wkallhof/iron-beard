@@ -10,9 +10,11 @@ namespace IronBeard.Core.Features.Routing
     public interface IUrlProvider
     {
         string GetUrl(InputFile file);
-        string GetUrlWithExtension(InputFile file);
     }
 
+    /// <summary>
+    /// TODO: Consider how to use this with OutputFile instead
+    /// </summary>
     public class UrlProvider : IUrlProvider
     {
         private BeardConfig _config;
@@ -25,12 +27,13 @@ namespace IronBeard.Core.Features.Routing
             if(file.Name.IgnoreCaseEquals(this._config.IndexFileName))
                 return file.RelativeDirectory;
 
-            return Path.Combine(file.RelativeDirectory, file.Name);
-        }
+            var extension = file.Extension.IgnoreCaseEquals(".cshtml") 
+                    || file.Extension.IgnoreCaseEquals(".md")
+                    ?  ".html" : file.Extension;
 
-        public string GetUrlWithExtension(InputFile file)
-        {
-            return Path.Combine(file.RelativeDirectory, file.Name + file.Extension);
+            extension = this._config.ExcludeHtmlExtension && extension.IgnoreCaseEquals(".html") ? string.Empty : extension;
+
+            return Path.Combine(file.RelativeDirectory, file.Name + extension);
         }
     }
 }

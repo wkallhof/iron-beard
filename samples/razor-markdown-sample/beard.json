@@ -1,8 +1,9 @@
 {
     "Config" : {
-        "SiteTitle" : "Razor Markdown Sample",
+        "SiteTitle" : "Razor Markdown Sample 2",
         "IndexFileName" : "index",
         "LayoutFileName" : "_Layout",
-        "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ]
+        "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ],
+        "ExcludeHtmlExtension": true
     }
 }

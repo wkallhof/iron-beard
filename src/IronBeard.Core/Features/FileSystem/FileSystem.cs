@@ -122,6 +122,9 @@ namespace IronBeard.Core.Features.FileSystem
         }
 
         private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){
+            if(basePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
+                basePath = basePath.Substring(0, basePath.Length - 1);
+                
             return new InputFile()
             {
                 Name = Path.GetFileNameWithoutExtension(info.Name),

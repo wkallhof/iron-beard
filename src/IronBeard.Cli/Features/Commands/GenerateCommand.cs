@@ -66,7 +66,7 @@ namespace IronBeard.Cli.Features.Commands
             // build configuration
             var configuration = new ConfigurationBuilder()
                 .SetBasePath(inputDirectory)
-                .AddJsonFile("beard.json")
+                .AddJsonFile("beard.json", optional:true)
                 .Build();
 
             services.AddOptions();

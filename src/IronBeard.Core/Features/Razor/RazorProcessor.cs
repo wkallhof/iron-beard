@@ -99,15 +99,14 @@ namespace IronBeard.Core.Features.Razor
             }
 
             var html = this.AppendLayoutInfo(fileContent, this._context.Layout);
-            var tempFile = await this._fileSystem.CreateTempFileAsync(html);
+            var tempFile = await this._fileSystem.CreateTempFileAsync(html, ".cshtml");
             try{
                 return await this._renderer.RenderAsync(tempFile.RelativePath, viewContext);
             }
             catch(Exception e)
             {
                 var message = e.Message.Replace(tempFile.FullPath, file.FullPath);
-                this._log.Error<RazorProcessor>(message);
-                return string.Empty;
+                throw new Exception(message);
             }
         }
 
@@ -116,6 +115,9 @@ namespace IronBeard.Core.Features.Razor
                 return fileContent;
 
             var relativePath = Path.Combine("~", layout.RelativePath);
+
+            // for windows support, we need to flip
+            relativePath = relativePath.Replace("\\","/");
 
             var razorLayoutString = $"@{{ Layout = \"{ relativePath }\"; }}\n";
             return razorLayoutString + fileContent;

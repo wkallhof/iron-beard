@@ -23,7 +23,7 @@ namespace IronBeard.Core.Features.FileSystem
 
         Task<string> CreateTempFolderAsync(string basePath);
         Task DeleteTempFolderAsync();
-        Task<InputFile> CreateTempFileAsync(string content);
+        Task<InputFile> CreateTempFileAsync(string content, string extension);
 
     }
 
@@ -114,12 +114,12 @@ namespace IronBeard.Core.Features.FileSystem
             await this.DeleteDirectoryAsync(this._tempFolderPath);
         }
 
-        public async Task<InputFile> CreateTempFileAsync(string content)
+        public async Task<InputFile> CreateTempFileAsync(string content, string extension)
         {
             if(!this._tempFolderPath.IsSet())
                 throw new Exception("Temp folder must be created before Temp file");
 
-            var filePath = Path.Combine(this._tempFolderPath, Guid.NewGuid().ToString() + ".tmp");
+            var filePath = Path.Combine(this._tempFolderPath, Guid.NewGuid().ToString() + extension);
             using (var writer = File.CreateText(filePath))
             {
                 await writer.WriteLineAsync(content).ConfigureAwait(false);

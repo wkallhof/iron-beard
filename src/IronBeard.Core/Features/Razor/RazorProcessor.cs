@@ -108,7 +108,7 @@ namespace IronBeard.Core.Features.Razor
             this._log.Info<RazorProcessor>($"Processing Markdown Output : { file.RelativePath }");
 
             // build ViewContext for passing into renderer
-            var viewContext = new ViewContext(file, this._context);
+            var viewContext = new ViewContext(file, this._context, this._config);
 
             // we already have the HTML from the markdown since it happened in the process stage. Pass to render
             file.Content = await this.CreateTempAndRender(file.Content, file, viewContext);
@@ -124,7 +124,7 @@ namespace IronBeard.Core.Features.Razor
             this._log.Info<RazorProcessor>($"Processing Razor Output : { file.Input.RelativePath }");
 
             // build ViewContext for passing into renderer
-            var viewContext = new ViewContext(file, this._context);
+            var viewContext = new ViewContext(file, this._context, this._config);
 
             // we haven't processed the file content yet. Read it in for processing
             var fileContent = await this._fileSystem.ReadAllTextAsync(file.Input.FullPath);

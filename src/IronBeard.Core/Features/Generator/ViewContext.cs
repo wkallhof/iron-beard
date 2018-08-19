@@ -1,6 +1,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
+using IronBeard.Core.Features.Configuration;
 using IronBeard.Core.Features.FileSystem;
 
 namespace IronBeard.Core.Features.Generator
@@ -32,12 +33,18 @@ namespace IronBeard.Core.Features.Generator
         /// </summary>
         public IEnumerable<OutputFile> All { get; set; }
 
-        public ViewContext(OutputFile current, GeneratorContext context){
+        /// <summary>
+        /// Current instance of the site's config values
+        /// </summary>
+        public BeardConfig Config { get; set; }
+
+        public ViewContext(OutputFile current, GeneratorContext context, BeardConfig config){
             this.Current = current;
 
             this.Siblings = context.OutputFiles.Where(x => x.RelativeDirectory.Equals(current.RelativeDirectory) && x != current);
             this.Children = context.OutputFiles.Where(x => x.RelativeDirectory.Contains(current.RelativeDirectory) && !x.RelativeDirectory.Equals(current.RelativeDirectory));
             this.All = context.OutputFiles;
+            this.Config = config;
         }
     }
 }

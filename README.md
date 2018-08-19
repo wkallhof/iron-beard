@@ -139,3 +139,61 @@ The default configuration is as follows:
 * `LayoutFileName` : This is the layout file used to wrap your `.cshtml` and `.md` files. IronBeard will look for this file to determine the layout to use.
 
 * `StaticExtensionIgnoreList` : This array should hold the list of extensions you want the static processor to ignore. If it is _not_ in this list, the files will be copied into the output directory.
+
+## ViewContext
+
+Razor files can take advantage of the `ViewContext` model that is automatically passed in to each view file while rendering by appending `@model IronBeard.Core.Features.Generator.ViewContext` to the top of the Razor file.
+
+The ViewContext contains the following useful properties
+```
+public class ViewContext
+{
+    public OutputFile Current {get;set;}                    #Access the current page's model, including MetaData (see below)
+    public IEnumerable<OutputFile> Siblings { get; set; }   #Access the current page's sibling pages
+    public IEnumerable<OutputFile> Children { get; set; }   #Access the current page's children pages (sub directories)
+    public IEnumerable<OutputFile> All { get; set; }        #Access HTML pages in the site
+}
+```
+
+### Example
+```
+@using System.Linq
+@model IronBeard.Core.Features.Generator.ViewContext
+@{
+    var articles = Model.Siblings.Where(x => x.Metadata.ContainsKey("Title"));
+}
+
+@if(articles.Any())
+{
+    <h2>Articles</h2>
+    <ul>
+        @foreach(var article in articles){
+            <li><a href="@article.Url">@article.Metadata["Title"]</a></li>
+        }
+    </ul>
+}
+```
+
+
+## Metadata
+
+IronBeard supports YAML Frontmatter in both Markdown and Razor files. This YAML is processed and exposed on the Model passed into all Razor views via each page's `Metadata` property. However, the syntax is slightly different between the two file types:
+
+#### Razor
+I found it important to be able to specify the metadata for a Razor anywhere in the document, so there is no requirement that the frontmatter be defined at the very top of the file. Instead, it uses Razor Comments with a `META` attached to the opening. Everything between the `@*META` and `*@` is processed as YAML.
+```
+@*META
+Title: Posita vixque alis
+Tags: Article
+*@
+```
+
+#### Markdown
+The YAML format here follows standards on requiring the frontmatter to be defined at the very beginning of the file. 
+```
+---
+Title: Posita vixque alis
+Tags: Article
+---
+```
+

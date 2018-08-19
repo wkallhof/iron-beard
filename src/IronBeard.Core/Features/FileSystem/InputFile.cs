@@ -2,6 +2,9 @@ using System.IO;
 
 namespace IronBeard.Core.Features.FileSystem
 {
+    /// <summary>
+    /// This represents a file that was scanned with the static generator.
+    /// </summary>
     public class InputFile
     {
         public string Name { get; set; }

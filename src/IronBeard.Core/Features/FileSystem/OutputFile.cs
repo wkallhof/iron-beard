@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace IronBeard.Core.Features.FileSystem
 {
+    /// <summary>
+    /// This represents a file to be written to disk
+    /// </summary>
     public class OutputFile : InputFile
     {
         public string Content { get; set; }

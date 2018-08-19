@@ -2,6 +2,9 @@ using System.Collections.Generic;
 
 namespace IronBeard.Core.Features.Configuration
 {
+    /// <summary>
+    /// Main configuration settings, parsed from beard.json file.
+    /// </summary>
     public class BeardConfig
     {
         public string SiteTitle { get; set; } = "My IrondBeard Site";

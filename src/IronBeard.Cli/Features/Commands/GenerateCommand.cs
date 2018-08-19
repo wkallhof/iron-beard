@@ -14,6 +14,7 @@ using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IO;
+using System.Reflection;
 
 namespace IronBeard.Cli.Features.Commands
 {
@@ -27,6 +28,12 @@ namespace IronBeard.Cli.Features.Commands
         [Option("-o|--output <PATH>", "Provide the directory where Iron Beard should write the static site to.", CommandOptionType.SingleValue)]
         public string OutputDirectory { get; set; }
 
+        /// <summary>
+        /// Main execution method for the Generate command. Normalizes the inputs,
+        /// builds up the DI container, adds processors, and executes generator
+        /// </summary>
+        /// <param name="app">App context</param>
+        /// <returns>Status code</returns>
         public async Task<int> OnExecuteAsync(CommandLineApplication app)
         {
             // normalize inputs
@@ -39,18 +46,22 @@ namespace IronBeard.Cli.Features.Commands
             // configure services
             var services = ConfigureServices(inputPath, outputPath);
 
+            // fetch the services we need right now
             var logger = services.GetService<ILogger>();
-
             var generator = services.GetService<StaticGenerator>();
 
+            // add our processors in the desired order
             generator.AddProcessor(services.GetService<MarkdownProcessor>());
             generator.AddProcessor(services.GetService<RazorProcessor>());
             generator.AddProcessor(services.GetService<StaticProcessor>());
             generator.AddProcessor(services.GetService<HtmlFormatProcessor>());
 
             try{
-                logger.Ascii("Iron Beard");
+                var startTime = DateTime.Now;
+                logger.Info<GenerateCommand>($"--- Iron Beard v{this.GetVersion()} --- ");
                 await generator.Generate();
+                var completeTime = DateTime.Now;
+                logger.Info<GenerateCommand>($"Completed in {(completeTime - startTime).TotalSeconds.ToString("N2")}s");
                 return 0;
             }
             catch(Exception e){
@@ -59,6 +70,12 @@ namespace IronBeard.Cli.Features.Commands
             }
         }
 
+        /// <summary>
+        /// Builds up our service container for DI
+        /// </summary>
+        /// <param name="inputDirectory">Defined Input Directory</param>
+        /// <param name="outputDirectory">Defined Output Directory</param>
+        /// <returns>Service Provider</returns>
         private ServiceProvider ConfigureServices(string inputDirectory, string outputDirectory)
         {
             var services = new ServiceCollection();
@@ -71,6 +88,7 @@ namespace IronBeard.Cli.Features.Commands
 
             services.AddOptions();
 
+            // bind to our config model
             var config = new BeardConfig();
             configuration.Bind("Config", config);
             services.AddSingleton(config);
@@ -88,5 +106,12 @@ namespace IronBeard.Cli.Features.Commands
 
             return services.BuildServiceProvider();
         }
+
+        /// <summary>
+        /// Get's the current version of the CLI application by reading
+        /// the assembly for the version info
+        /// </summary>
+        /// <returns>Version info</returns>
+        private string GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
     }
 }

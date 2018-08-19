@@ -5,6 +5,10 @@ using System.Drawing;
 
 namespace IronBeard.Cli.Features.Logging
 {
+    /// <summary>
+    /// Console implementation of our ILogger interface
+    /// Uses the passed in type as a logging context
+    /// </summary>
     public class ConsoleLogger : ILogger
     {
         public void Error<T>(string message) => WriteLine<T>(message, Color.Red);

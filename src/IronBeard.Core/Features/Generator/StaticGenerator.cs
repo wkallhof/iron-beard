@@ -10,6 +10,9 @@ using IronBeard.Core.Features.Shared;
 
 namespace IronBeard.Core.Features.Generator
 {
+    /// <summary>
+    /// Main static generator.
+    /// </summary>
     public class StaticGenerator
     {
         private List<IProcessor> _processors;
@@ -34,8 +37,17 @@ namespace IronBeard.Core.Features.Generator
             this._fileSystem = fileSystem;
         }
 
+        /// <summary>
+        /// Allows consuming application to define the processors used
+        /// </summary>
+        /// <param name="processor">Processor to add to pipeline</param>
         public void AddProcessor(IProcessor processor) => this._processors.Add(processor);
 
+        /// <summary>
+        /// Starts the static generator process. Scans files, iterates through
+        /// processors, and eventually writes files.
+        /// </summary>
+        /// <returns>Task</returns>
         public async Task Generate(){
             try{
                 if(!this._processors.Any())
@@ -71,12 +83,21 @@ namespace IronBeard.Core.Features.Generator
             }
         }
 
+        /// <summary>
+        /// Pre-process our files. Useful for scanning input files, finding layouts, etc.
+        /// </summary>
+        /// <returns>Task</returns>
         private async Task RunPreProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.InputFiles)
                     await processor.PreProcessAsync(file);
         }
 
+        /// <summary>
+        /// Main processing pass. Generates OutputFiles from our InputFiles
+        /// for further processing
+        /// </summary>
+        /// <returns>Task</returns>
         private async Task RunProcessing(){
             var outputFiles = new Dictionary<string, OutputFile>();
             foreach(var processor in this._processors){
@@ -93,6 +114,11 @@ namespace IronBeard.Core.Features.Generator
             this._context.OutputFiles = outputFiles.Select(x => x.Value);
         }
 
+        /// <summary>
+        /// Post-processing of our OutputFiles. This is the last step
+        /// of processing before files are written to disk
+        /// </summary>
+        /// <returns></returns>
         private async Task RunPostProcessing(){
             foreach(var processor in this._processors)
                 foreach(var file in this._context.OutputFiles)

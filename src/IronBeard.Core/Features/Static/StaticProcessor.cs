@@ -13,6 +13,11 @@ using Microsoft.Extensions.Options;
 
 namespace IronBeard.Core.Features.Static
 {
+    /// <summary>
+    /// Static processor responsible for processing our static files.
+    /// In its current implementation, it simply copies the static files
+    /// to their output directory
+    /// </summary>
     public class StaticProcessor : IProcessor
     {
         private List<string> _ignoreExtensions;
@@ -29,13 +34,20 @@ namespace IronBeard.Core.Features.Static
             this._ignoreExtensions = this._config.StaticExtensionIgnoreList.Select(x => x.ToLower()).ToList();
         }
         
+        /// <summary>
+        /// Main process action to define the destination file paths
+        /// </summary>
+        /// <param name="file">Intput file</param>
+        /// <returns>OutputFile if static file</returns>
         public Task<OutputFile> ProcessAsync(InputFile file)
         {
+            // If our file is something to ignore, ignore it
             if(this._ignoreExtensions.Contains(file.Extension.ToLower()))
                 return Task.FromResult<OutputFile>(null);
 
             this._log.Info<StaticProcessor>($"Processing Input: {file.RelativePath}");
 
+            // create OutputFile with the Direct Copy flag set to true
             var output = OutputFile.FromInputFile(file);
             output.DirectCopy = true;
             output.BaseDirectory = this._context.OutputDirectory;

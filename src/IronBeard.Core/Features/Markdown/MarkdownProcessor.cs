@@ -14,6 +14,9 @@ using YamlDotNet.Serialization;
 
 namespace IronBeard.Core.Features.Markdown
 {
+    /// <summary>
+    /// Processor responsible for converting Markdown .md files into HTML
+    /// </summary>
     public class MarkdownProcessor : IProcessor
     {
         private IFileSystem _fileSystem;
@@ -29,8 +32,15 @@ namespace IronBeard.Core.Features.Markdown
             this._context = context;
         }
 
+        // no pre-processing required
         public Task PreProcessAsync(InputFile file) => Task.CompletedTask;
 
+        /// <summary>
+        /// Main markdown processing. Determines if the given file is a markdown file, and if so,
+        /// pulls out metadata and converts content into HTML
+        /// </summary>
+        /// <param name="file">File to process</param>
+        /// <returns>OutputFile if InputFile was markdown</returns>
         public async Task<OutputFile> ProcessAsync(InputFile file)
         {
             if (!file.Extension.ToLower().Equals(".md"))
@@ -42,8 +52,10 @@ namespace IronBeard.Core.Features.Markdown
             if (!markdown.IsSet())
                 return null;
 
+            // extract our metadata
             var result = this.ExtractYamlMetadata(markdown);
 
+            // convert markdown to HTML
             var html = Markdig.Markdown.ToHtml(result.markdown);
 
             var output = OutputFile.FromInputFile(file);
@@ -56,6 +68,12 @@ namespace IronBeard.Core.Features.Markdown
             return output;
         }
 
+        /// <summary>
+        /// Extracts YAML frontmatter from the beginning of the markdown file content.
+        /// Converts this YAML to a dictionary for reference in Razor rendering
+        /// </summary>
+        /// <param name="markdown">Markdown content</param>
+        /// <returns>Markdown content without YAML, Metadata dictionary</returns>
         private (string markdown, Dictionary<string,string> metadata) ExtractYamlMetadata(string markdown){
             var metadata = new Dictionary<string, string>();
             // ensure we have HTML and that it starts with our delimiter (---)
@@ -67,7 +85,7 @@ namespace IronBeard.Core.Features.Markdown
             if(endDelimiterIndex < 0)
                 return (markdown, metadata);
 
-
+            // pull out YAML string
             var yamlString = markdown.Substring(YAML_DEL.Length, endDelimiterIndex-1);
             markdown = markdown.Substring(endDelimiterIndex + (YAML_DEL.Length*2));
 

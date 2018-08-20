@@ -1,6 +1,7 @@
 using System;
 using System.Drawing;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
@@ -39,7 +40,9 @@ namespace IronBeard.Cli.Features.Commands
             await this.RunGenerate();
             
             // keep running always until user closes
-            while (true) { };
+            while (true) {
+                Thread.Sleep(10);
+            };
         }
 
         /// <summary>

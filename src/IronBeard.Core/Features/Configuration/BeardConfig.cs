@@ -12,5 +12,6 @@ namespace IronBeard.Core.Features.Configuration
         public string LayoutFileName { get; set; } = "_Layout";
         public List<string> StaticExtensionIgnoreList { get; set; } = new List<string> { ".cshtml", ".md", ".DS_Store", ".json" };
         public bool ExcludeHtmlExtension { get; set; } = true;
+        public bool EnableMarkdownExtensions { get; set; } = false;
     }
 }

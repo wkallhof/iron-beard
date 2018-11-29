@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using IronBeard.Core.Extensions;
+using IronBeard.Core.Features.Configuration;
 using IronBeard.Core.Features.FileSystem;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
@@ -22,14 +23,25 @@ namespace IronBeard.Core.Features.Markdown
         private IFileSystem _fileSystem;
         private IUrlProvider _urlProvider;
         private GeneratorContext _context;
+        private BeardConfig _config;
         private ILogger _log;
+        private MarkdownPipeline _pipeline = null;
         private const string YAML_DEL = "---";
 
-        public MarkdownProcessor(IFileSystem fileSystem, ILogger logger, IUrlProvider urlProvider, GeneratorContext context){
+        public MarkdownProcessor(IFileSystem fileSystem, ILogger logger, IUrlProvider urlProvider, BeardConfig config, GeneratorContext context){
             this._log = logger;
             this._fileSystem = fileSystem;
             this._urlProvider = urlProvider;
             this._context = context;
+            this._config = config;
+
+            // Enable MarkdownExtensions if configured
+            if (_config.EnableMarkdownExtensions)
+            {
+                _pipeline = new MarkdownPipelineBuilder()
+                    .UseAdvancedExtensions()
+                    .Build();
+            }
         }
 
         // no pre-processing required
@@ -56,7 +68,7 @@ namespace IronBeard.Core.Features.Markdown
             var result = this.ExtractYamlMetadata(markdown);
 
             // convert markdown to HTML
-            var html = Markdig.Markdown.ToHtml(result.markdown);
+            var html = Markdig.Markdown.ToHtml(result.markdown, _pipeline);
 
             var output = OutputFile.FromInputFile(file);
             output.Content = html;

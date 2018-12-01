@@ -180,6 +180,19 @@ public class ViewContext
 }
 ```
 
+## Partials
+Partials are fully supported in IronBeard. However, it is important to note that the pathing to the partial should be relative to the root of the application and not the current file. For example
+
+#### Bad:
+```
+<partial name="../../shared/partials/_articles.cshtml" />
+```
+
+#### Good:
+```
+<partial name="/shared/partials/_articles.cshtml" />
+```
+
 
 ## Metadata
 

@@ -160,7 +160,7 @@ namespace IronBeard.Core.Features.Razor
                 // renderer not finding the view file. In the event the issue with a problem with our
                 // razor syntax, make sure we replace the temp file path with the original path so the user
                 // knows where to find the syntax error.
-                var message = e.Message.Replace(tempFile.FullPath, file.FullPath);
+                var message = $"{file.FullPath}: {e.Message.Replace(tempFile.FullPath, file.FullPath)}";
                 throw new Exception(message);
             }
         }

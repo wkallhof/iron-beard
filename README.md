@@ -26,8 +26,6 @@ Adding a `beard.json` file to your project root allows for further configuration
 - [x] Rich CLI output
 - [x] Valid system errors codes (useful for automation)
 - [x] Watch command for automatic rebuilding on file or directory change
-- [ ] Project Scaffolding
-- [ ] Static Web Server
 
 
 ## Get started
@@ -47,6 +45,21 @@ beard
 ```
 
 It will scan your current directory for site files and generate a `www` folder in your current directory with the generated static site.
+
+## Serving Local
+Rather than re-invent the wheel here and include a built in static server, it is recommended that you use [dotnet-serve](https://github.com/natemcmaster/dotnet-serve), a "Simple command-line HTTPS server for the .NET Core CLI" by [Nate McMaster](https://github.com/natemcmaster). 
+
+Just like IronBeard, you can install it via `dotnet tool`:
+```
+dotnet tool install --global dotnet-serve
+```
+and use it to serve your generated site using the CLI:
+
+```
+dotnet serve ./www
+```
+
+where `./www` is your output directory
 
 ## Example
 

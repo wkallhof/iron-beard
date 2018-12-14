@@ -13,7 +13,6 @@ namespace IronBeard.Cli.Features.Commands
     [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
     [Subcommand("generate", typeof(GenerateCommand))]
     [Subcommand("watch", typeof(WatchCommand))]
-    [Subcommand("init", typeof(InitCommand))]
     public class BeardCommand
     {
         public string[] RemainingArgs { get; set; }

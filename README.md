@@ -149,7 +149,7 @@ The default configuration is as follows:
 
 * `SiteTitle` : This is the title to display for your generated site. This will be propagated to things like the browser tab.
 
-* `IndexFileName` : This is the file name that should be display as the root in any directory. For example, if you had a `/projects` folder and you wanted a page to represent your projects, you'd put a file `/projects/index.cshtml` into that diretory, which will be loaded when a user goes to `/projects` in their browser
+* `IndexFileName` : This is the file name that should be display as the root in any directory. For example, if you had a `/projects` folder and you wanted a page to represent your projects, you'd put a file `/projects/index.cshtml` into that directory, which will be loaded when a user goes to `/projects` in their browser
 
 * `LayoutFileName` : This is the layout file used to wrap your `.cshtml` and `.md` files. IronBeard will look for this file to determine the layout to use.
 

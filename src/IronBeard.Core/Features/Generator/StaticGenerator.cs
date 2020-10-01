@@ -49,6 +49,7 @@ namespace IronBeard.Core.Features.Generator
         /// </summary>
         /// <returns>Task</returns>
         public async Task Generate(){
+            bool errorOccured = false;
             try{
                 if(!this._processors.Any())
                     throw new Exception("No processors added to generator.");
@@ -76,10 +77,22 @@ namespace IronBeard.Core.Features.Generator
                 this._log.Info<StaticGenerator>("Writing files...");
                 await this._fileSystem.WriteOutputFilesAsync(this._context.OutputFiles);
             }
+            catch (Exception ex)
+            {
+                //We don't want to actually catch the exception, just set a flag if it occurs.
+                errorOccured = true;
+                throw ex;
+            }
             finally
             {
-                this._log.Info<StaticGenerator>("Deleting temp directory...");
-                await this._fileSystem.DeleteTempFolderAsync();
+                if (errorOccured && _context.LeaveTempDirOnError)
+                {
+                    this._log.Error<StaticGenerator>("An error has occured. Leaving the temporary directory intact.\nThe folder will have to be deleted manually.");
+                } else
+                {
+                    this._log.Info<StaticGenerator>("Deleting temp directory...");
+                    await this._fileSystem.DeleteTempFolderAsync();
+                }
             }
         }
 

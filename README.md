@@ -142,7 +142,8 @@ The default configuration is as follows:
         "LayoutFileName" : "_Layout",
         "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ],
         "ExcludeHtmlExtension": true,
-        "EnableMarkdownExtensions": false
+        "EnableMarkdownExtensions": false,
+        "LeaveTempDirOnError": false
     }
 }
 ```
@@ -158,6 +159,8 @@ The default configuration is as follows:
 * `ExcludeHtmlExtension` : Defaults to `true`, this will not write out the `.html` extension for your generated HTML pages. This provides cleaner routing : `/articles/article` vs `/articles/article.html`. Special work may need to be done to ensure your static host sets the correct `content-type` for your uploaded files to `text/html`. Some rely on the extension to determine this, which these html files will not have. Setting this to false will write out the `.html` extensions as well as update the `Url` property to include the extension so you can navigate your static site locally without the use of a static file server.
 
 * `EnableMarkdownExtensions` : Defaults to `false`, enables markdown extensions (see [Markdig](https://github.com/lunet-io/markdig)).
+
+* `LeaveTempDirOnError` : Defaults to false, when set to true, the temp directory won't be deleted when an error occurs during processing.
 
 ## ViewContext
 

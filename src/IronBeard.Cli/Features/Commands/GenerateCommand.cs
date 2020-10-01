@@ -93,7 +93,7 @@ namespace IronBeard.Cli.Features.Commands
             configuration.Bind("Config", config);
             services.AddSingleton(config);
 
-            services.AddSingleton<GeneratorContext>(new GeneratorContext(inputDirectory, outputDirectory));
+            services.AddSingleton<GeneratorContext>(new GeneratorContext(inputDirectory, outputDirectory, config.LeaveTempDirOnError));
             services.AddSingleton<MarkdownProcessor>();
             services.AddSingleton<RazorProcessor>();
             services.AddSingleton<StaticProcessor>();

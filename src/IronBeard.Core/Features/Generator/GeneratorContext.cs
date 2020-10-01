@@ -36,11 +36,17 @@ namespace IronBeard.Core.Features.Generator
         /// </summary>
         public IEnumerable<OutputFile> OutputFiles { get; set; }
 
-        public GeneratorContext(string inputDir, string outputDir){
+        /// <summary>
+        /// Prevents deletion of the output files on error
+        /// </summary>
+        public bool LeaveTempDirOnError { get; set; }
+
+        public GeneratorContext(string inputDir, string outputDir, bool leaveTempDirOnError = false){
             this.InputDirectory = inputDir;
             this.OutputDirectory = outputDir;
             this.InputFiles = new List<InputFile>();
             this.OutputFiles = new List<OutputFile>();
+            this.LeaveTempDirOnError = leaveTempDirOnError;
         }
     }
 }

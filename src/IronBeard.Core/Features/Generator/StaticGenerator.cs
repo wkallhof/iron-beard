@@ -85,7 +85,7 @@ namespace IronBeard.Core.Features.Generator
             }
             finally
             {
-                if (errorOccured && _context.KeepTempFilesOnError)
+                if (errorOccured && _context.LeaveTempDirOnError)
                 {
                     this._log.Info<StaticGenerator>("An error has occured. Leaving the temporary directory intact.\nThe folder will have to be deleted manually.");
                 } else

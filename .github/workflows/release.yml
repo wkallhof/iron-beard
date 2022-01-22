@@ -22,4 +22,7 @@ jobs:
     - name: Test
       run: dotnet run --project ./src/IronBeard.Cli -- generate -i ./samples/razor-markdown-sample
       
+    - name: Output Version
+      run: echo 1.0.${{ github.run_number }}
+      
       

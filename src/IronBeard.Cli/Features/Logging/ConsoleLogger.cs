@@ -1,6 +1,5 @@
 using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Extensions;
-using Colorful;
 using System.Drawing;
 
 namespace IronBeard.Cli.Features.Logging
@@ -17,16 +16,16 @@ namespace IronBeard.Cli.Features.Logging
         public void Warn<T>(string message) => WriteLine<T>(message, Color.Yellow);
 
         public void Ascii(string message){
-            Console.WriteAscii(message,Color.White);
+            Colorful.Console.WriteAscii(message,Color.White);
         }
 
         private void WriteLine<T>(string message, Color color)
         {
-            Console.Write("[", Color.Green);
-            Console.Write($"{typeof(T).Name}", Color.Yellow);
-            Console.Write("] ", Color.Green);
+            Colorful.Console.Write("[", Color.Green);
+            Colorful.Console.Write($"{typeof(T).Name}", Color.Yellow);
+            Colorful.Console.Write("] ", Color.Green);
 
-            Console.Write( $"{message}\n", color);
+            Colorful.Console.Write( $"{message}\n", color);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace IronBeard.Core.Features.Generator
         /// This Layout references any files that match the layout file name. This will be used
         /// by the Razor processor to wrap content in a layout.
         /// </summary>
-        public InputFile Layout { get; set; }
+        public InputFile? Layout { get; set; }
 
         /// <summary>
         /// The current working directory to write files to
@@ -37,10 +37,10 @@ namespace IronBeard.Core.Features.Generator
         public IEnumerable<OutputFile> OutputFiles { get; set; }
 
         public GeneratorContext(string inputDir, string outputDir){
-            this.InputDirectory = inputDir;
-            this.OutputDirectory = outputDir;
-            this.InputFiles = new List<InputFile>();
-            this.OutputFiles = new List<OutputFile>();
+            InputDirectory = inputDir;
+            OutputDirectory = outputDir;
+            InputFiles = new List<InputFile>();
+            OutputFiles = new List<OutputFile>();
         }
     }
 }

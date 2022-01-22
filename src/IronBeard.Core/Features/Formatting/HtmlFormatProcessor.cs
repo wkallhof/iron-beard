@@ -1,9 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using System.Xml.Linq;
 using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.FileSystem;
-using IronBeard.Core.Features.Generator;
 using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Shared;
 
@@ -18,10 +15,10 @@ namespace IronBeard.Core.Features.Formatting
     /// </summary>
     public class HtmlFormatProcessor : IProcessor
     {
-        private ILogger _log;
+        private readonly ILogger _log;
 
         public HtmlFormatProcessor(ILogger logger){
-            this._log = logger;
+            _log = logger;
         }
 
         /// <summary>
@@ -33,25 +30,25 @@ namespace IronBeard.Core.Features.Formatting
         /// <returns>Task</returns>
         public Task PostProcessAsync(OutputFile file)
         {
-            // If it isn't an HTML, don't bother
-            if(!file.Extension.IgnoreCaseEquals(".html"))
+            // If it isn't an HTML or it doesn't have content, don't bother
+            if(!file.Extension.IgnoreCaseEquals(".html") || !file.Content.IsSet())
                 return Task.CompletedTask;
 
-            this._log.Info<HtmlFormatProcessor>("Formatting " + file.RelativePath);
+            _log.Info<HtmlFormatProcessor>("Formatting " + file.RelativePath);
             try
             {
                 // simply by parsing with XElement, it formats the content
-                file.Content = XElement.Parse(file.Content).ToString();
+                file.Content = XElement.Parse(file.Content!).ToString();
             }
             catch(Exception e)
             {
                 // The only real exception thrown relates to the content not being well formed
-                this._log.Warn<HtmlFormatProcessor>($"{file.RelativePath} isn't well formed XML / HTML : {e.Message}");
+                _log.Warn<HtmlFormatProcessor>($"{file.RelativePath} isn't well formed XML / HTML : {e.Message}");
             }
             return Task.CompletedTask;
         }
 
         public Task PreProcessAsync(InputFile file) => Task.CompletedTask;
-        public Task<OutputFile> ProcessAsync(InputFile file) => Task.FromResult<OutputFile>(null);
+        public Task<OutputFile?> ProcessAsync(InputFile file) => Task.FromResult<OutputFile?>(null);
     }
 }

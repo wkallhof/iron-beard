@@ -12,7 +12,7 @@ namespace IronBeard.Core.Extensions
         /// </summary>
         /// <param name="s">String to check value on</param>
         /// <returns>True if value set, False if not</returns>
-        public static bool IsSet(this string s){
+        public static bool IsSet(this string? s){
             return !string.IsNullOrWhiteSpace(s);
         }
 

@@ -1,8 +1,3 @@
-using System;
-using System.Drawing;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
 using McMaster.Extensions.CommandLineUtils;
 
 namespace IronBeard.Cli.Features.Commands
@@ -10,8 +5,7 @@ namespace IronBeard.Cli.Features.Commands
     [Command(Description = "Watch a directory for changes and rebuild automatically")]
     public class WatchCommand : GenerateCommand
     {
-        private CommandLineApplication _app;
-        private FileSystemWatcher _watcher;
+        private FileSystemWatcher? _watcher;
 
         /// <summary>
         /// Main execution method for the Watch command. It starts a FileWatcher
@@ -20,24 +14,22 @@ namespace IronBeard.Cli.Features.Commands
         /// </summary>
         /// <param name="app">App context</param>
         /// <returns>Status code</returns>
-        public new async Task<int> OnExecuteAsync(CommandLineApplication app)
-        {
-            this._app = app;
-            
+        public new async Task<int> OnExecuteAsync()
+        {            
             // normalize input path
             var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, InputDirectory));
 
             // build up FileWatcher and bind events
-            this._watcher = new FileSystemWatcher(inputPath);
-            this._watcher.Renamed += async (s, e) => await Renamed(s, e);
-            this._watcher.Deleted += async (s, e) => await Changed(s, e);
-            this._watcher.Changed += async (s, e) => await Changed(s, e);
-            this._watcher.Created += async (s, e) => await Changed(s, e);
-            this._watcher.IncludeSubdirectories = true;
-            this._watcher.Filter = "";
+            _watcher = new FileSystemWatcher(inputPath);
+            _watcher.Renamed += async (s, e) => await Renamed(s, e);
+            _watcher.Deleted += async (s, e) => await Changed(s, e);
+            _watcher.Changed += async (s, e) => await Changed(s, e);
+            _watcher.Created += async (s, e) => await Changed(s, e);
+            _watcher.IncludeSubdirectories = true;
+            _watcher.Filter = "";
 
             // run the initial generate command
-            await this.RunGenerate();
+            await RunGenerate();
             
             // keep running always until user closes
             while (true) {
@@ -69,15 +61,15 @@ namespace IronBeard.Cli.Features.Commands
         }
 
         /// <summary>
-        /// Responsible for running the `generate` command and passing in the inital arguments
+        /// Responsible for running the `generate` command and passing in the initial arguments
         /// It disables the FileWatcher events during the command execution to avoid triggering the 
         /// change events as the output and temp folders are created.
         /// </summary>
         /// <returns>Task</returns>
         private async Task RunGenerate(){
-            this._watcher.EnableRaisingEvents = false;
-            await base.OnExecuteAsync(this._app);
-            this._watcher.EnableRaisingEvents = true;
+            _watcher!.EnableRaisingEvents = false;
+            await base.OnExecuteAsync();
+            _watcher.EnableRaisingEvents = true;
             Console.WriteLine("Watching...");
         }
     }

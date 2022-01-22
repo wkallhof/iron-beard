@@ -1,12 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using Microsoft.Extensions.FileProviders;
 using IronBeard.Core.Extensions;
-using IronBeard.Core.Features.Shared;
 using IronBeard.Core.Features.Logging;
 using IronBeard.Core.Features.Configuration;
 
@@ -91,14 +84,14 @@ namespace IronBeard.Core.Features.FileSystem
     /// </summary>
     public class DiskFileSystem : IFileSystem
     {
-        private string _tempFolderPath;
-        private string _tempFolderBase;
-        private ILogger _log;
-        private BeardConfig _config;
+        private string? _tempFolderPath;
+        private string? _tempFolderBase;
+        private readonly ILogger _log;
+        private readonly BeardConfig _config;
 
         public DiskFileSystem(ILogger logger, BeardConfig config){
-            this._log = logger;
-            this._config = config;
+            _log = logger;
+            _config = config;
         }
 
         /// <summary>
@@ -110,7 +103,7 @@ namespace IronBeard.Core.Features.FileSystem
         public IEnumerable<InputFile> GetFiles(string directoryPath)
         {
             var directory = new DirectoryInfo(directoryPath);
-            return directory.EnumerateFiles("*.*", SearchOption.AllDirectories).Select(x => this.MapFileInfoToInputFile(x, directoryPath));
+            return directory.EnumerateFiles("*.*", SearchOption.AllDirectories).Select(x => MapFileInfoToInputFile(x, directoryPath));
         }
 
         /// <summary>
@@ -120,11 +113,10 @@ namespace IronBeard.Core.Features.FileSystem
         /// <returns>File content</returns>
         public async Task<string> ReadAllTextAsync(string filePath)
         {
-            using (var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true))
-            using (var reader = new StreamReader(fileStream, Encoding.UTF8))
-            {
-                return await reader.ReadToEndAsync().ConfigureAwait(false);
-            } 
+            using var fileStream = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read, 4096, true);
+            using var reader = new StreamReader(fileStream, Encoding.UTF8);
+            
+            return await reader.ReadToEndAsync().ConfigureAwait(false);
         }
 
         /// <summary>
@@ -134,7 +126,7 @@ namespace IronBeard.Core.Features.FileSystem
         /// <returns>Task</returns>
         public async Task WriteOutputFilesAsync(IEnumerable<OutputFile> files){
             foreach(var file in files){
-                await this.WriteOutputFileAsync(file);
+                await WriteOutputFileAsync(file);
             }
         }
 
@@ -146,22 +138,21 @@ namespace IronBeard.Core.Features.FileSystem
         public async Task WriteOutputFileAsync(OutputFile file){
 
             // ensure we account for excluding HTML extensions
-            if(this._config.ExcludeHtmlExtension && file.Extension.IgnoreCaseEquals(".html") && !file.Name.Equals(this._config.IndexFileName))
-                file.Extension = string.Empty;
+            if(_config.ExcludeHtmlExtension && file.Extension.IgnoreCaseEquals(".html") && !file.Name.Equals(_config.IndexFileName))
+                file = file with { Extension = string.Empty };
 
             // if we are just supposed to copy the file, just copy it
             if(file.DirectCopy){
-                await this.CopyOutputFileAsync(file);
+                await CopyOutputFileAsync(file);
                 return;
             }
             
             // create our directory if we need to and write file to disk
             Directory.CreateDirectory(file.FullDirectory);
-            using (var writer = File.CreateText(file.FullPath))
-            {
-                this._log.Info<DiskFileSystem>($"Writing Output File : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
-                await writer.WriteLineAsync(file.Content).ConfigureAwait(false);
-            } 
+            using var writer = File.CreateText(file.FullPath);
+
+            _log.Info<DiskFileSystem>($"Writing Output File : {Path.Combine(file.RelativeDirectory, file.Name + file.Extension)}");
+            await writer.WriteLineAsync(file.Content).ConfigureAwait(false);
         }
 
         /// <summary>
@@ -184,11 +175,10 @@ namespace IronBeard.Core.Features.FileSystem
         public async Task CopyOutputFileAsync(OutputFile file){
             // ensure our target directory exists
             Directory.CreateDirectory(file.FullDirectory);
-            using (Stream source = File.Open(file.Input.FullPath, FileMode.Open))
-            using(Stream destination = File.Create(file.FullPath))
-            {
-                await source.CopyToAsync(destination);
-            }
+            using var source = File.Open(file.Input.FullPath, FileMode.Open);
+            using var destination = File.Create(file.FullPath);
+
+            await source.CopyToAsync(destination);
         }
 
         /// <summary>
@@ -199,13 +189,13 @@ namespace IronBeard.Core.Features.FileSystem
         public Task<string> CreateTempFolderAsync(string directoryPath)
         {
             // if we have already created the temp folder, reuse it
-            if(this._tempFolderBase.IsSet() && this._tempFolderPath.IsSet())
-                return Task.FromResult(this._tempFolderPath);
+            if(_tempFolderBase.IsSet() && _tempFolderPath.IsSet())
+                return Task.FromResult(_tempFolderPath!);
 
-            this._tempFolderBase = directoryPath;
-            this._tempFolderPath = Path.Combine(directoryPath, Guid.NewGuid().ToString());
-            Directory.CreateDirectory(this._tempFolderPath);
-            return Task.FromResult(this._tempFolderPath);
+            _tempFolderBase = directoryPath;
+            _tempFolderPath = Path.Combine(directoryPath, Guid.NewGuid().ToString());
+            Directory.CreateDirectory(_tempFolderPath);
+            return Task.FromResult(_tempFolderPath);
         }
 
         /// <summary>
@@ -215,10 +205,10 @@ namespace IronBeard.Core.Features.FileSystem
         public async Task DeleteTempFolderAsync()
         {
             // if we don't have a temp folder, return
-            if(!this._tempFolderPath.IsSet())
+            if(!_tempFolderPath.IsSet())
                 return;
 
-            await this.DeleteDirectoryAsync(this._tempFolderPath);
+            await DeleteDirectoryAsync(_tempFolderPath!);
         }
 
         /// <summary>
@@ -231,16 +221,16 @@ namespace IronBeard.Core.Features.FileSystem
         /// <returns>InputFile reference to new temp file</returns>
         public async Task<InputFile> CreateTempFileAsync(string content, string extension)
         {
-            if(!this._tempFolderPath.IsSet())
+            if(!_tempFolderPath.IsSet() || !_tempFolderBase.IsSet())
                 throw new Exception("Temp folder must be created before Temp file");
 
-            var filePath = Path.Combine(this._tempFolderPath, Guid.NewGuid().ToString() + extension);
+            var filePath = Path.Combine(_tempFolderPath!, Guid.NewGuid().ToString() + extension);
             using (var writer = File.CreateText(filePath))
             {
                 await writer.WriteLineAsync(content).ConfigureAwait(false);
             }
 
-            return this.MapFileInfoToInputFile(new FileInfo(filePath), this._tempFolderBase);
+            return MapFileInfoToInputFile(new FileInfo(filePath), _tempFolderBase!);
         }
 
         /// <summary>
@@ -249,19 +239,18 @@ namespace IronBeard.Core.Features.FileSystem
         /// <param name="info">FileInfo</param>
         /// <param name="basePath">Base path used to determine relative paths</param>
         /// <returns>InputFile mapping</returns>
-        private InputFile MapFileInfoToInputFile(FileInfo info, string basePath){
+        private static InputFile MapFileInfoToInputFile(FileInfo info, string basePath){
 
             // ensure that we normalize our base path to remove any trailing slashes
             if(basePath.EndsWith(Path.DirectorySeparatorChar.ToString()))
-                basePath = basePath.Substring(0, basePath.Length - 1);
+                basePath = basePath[0..^1];
 
-            return new InputFile()
-            {
-                Name = Path.GetFileNameWithoutExtension(info.Name),
-                Extension = info.Extension,
-                BaseDirectory = basePath,
-                RelativeDirectory = info.DirectoryName.Replace(basePath, "")
-            };
+            return new InputFile(
+                Name: Path.GetFileNameWithoutExtension(info.Name),
+                Extension: info.Extension,
+                BaseDirectory: basePath,
+                RelativeDirectory: info.DirectoryName!.Replace(basePath, "")
+            );
         }
     }
 }

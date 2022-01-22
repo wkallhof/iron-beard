@@ -15,33 +15,32 @@ namespace IronBeard.Core.Features.Generator
     /// </summary>
     public class StaticGenerator
     {
-        private List<IProcessor> _processors;
-        private IFileSystem _fileSystem;
-        private GeneratorContext _context;
-        private ILogger _log;
+        private readonly List<IProcessor> _processors;
+        private readonly IFileSystem _fileSystem;
+        private readonly GeneratorContext _context;
+        private readonly ILogger _log;
 
         public StaticGenerator(IFileSystem fileSystem, ILogger logger, GeneratorContext context){
-            this._log = logger;
-            this._processors = new List<IProcessor>();
-            this._context = context;
+            _log = logger;
+            _processors = new List<IProcessor>();
+            _context = context;
 
-            if(fileSystem == null)
-                throw new ArgumentException("File System not provided");
+            _fileSystem = fileSystem ?? throw new ArgumentException("File System not provided");
 
-            if(!context.InputDirectory.IsSet())
+            if (!context.InputDirectory.IsSet())
                 throw new ArgumentException("Input Directory not provided");
 
             if(!context.OutputDirectory.IsSet())
                 throw new ArgumentException("Output Directory not provided");
 
-            this._fileSystem = fileSystem;
+            
         }
 
         /// <summary>
         /// Allows consuming application to define the processors used
         /// </summary>
         /// <param name="processor">Processor to add to pipeline</param>
-        public void AddProcessor(IProcessor processor) => this._processors.Add(processor);
+        public void AddProcessor(IProcessor processor) => _processors.Add(processor);
 
         /// <summary>
         /// Starts the static generator process. Scans files, iterates through
@@ -50,36 +49,36 @@ namespace IronBeard.Core.Features.Generator
         /// <returns>Task</returns>
         public async Task Generate(){
             try{
-                if(!this._processors.Any())
+                if(!_processors.Any())
                     throw new Exception("No processors added to generator.");
 
-                this._log.Info<StaticGenerator>("Starting IronBeard...");
+                _log.Info<StaticGenerator>("Starting IronBeard...");
 
-                this._log.Info<StaticGenerator>("Clearing output directory...");
-                await this._fileSystem.DeleteDirectoryAsync(this._context.OutputDirectory);
+                _log.Info<StaticGenerator>("Clearing output directory...");
+                await _fileSystem.DeleteDirectoryAsync(_context.OutputDirectory);
 
-                this._log.Info<StaticGenerator>("Creating temp directory...");
-                await this._fileSystem.CreateTempFolderAsync(this._context.InputDirectory);
+                _log.Info<StaticGenerator>("Creating temp directory...");
+                await _fileSystem.CreateTempFolderAsync(_context.InputDirectory);
 
-                this._log.Info<StaticGenerator>("Loading files...");
-                this._context.InputFiles = this._fileSystem.GetFiles(this._context.InputDirectory).ToList();
+                _log.Info<StaticGenerator>("Loading files...");
+                _context.InputFiles = _fileSystem.GetFiles(_context.InputDirectory).ToList();
 
-                this._log.Info<StaticGenerator>("Pre-Processing...");
-                await this.RunPreProcessing();
+                _log.Info<StaticGenerator>("Pre-Processing...");
+                await RunPreProcessing();
 
-                this._log.Info<StaticGenerator>("Processing...");
-                await this.RunProcessing();
+                _log.Info<StaticGenerator>("Processing...");
+                await RunProcessing();
 
-                this._log.Info<StaticGenerator>("Post-Processing...");
-                await this.RunPostProcessing();
+                _log.Info<StaticGenerator>("Post-Processing...");
+                await RunPostProcessing();
 
-                this._log.Info<StaticGenerator>("Writing files...");
-                await this._fileSystem.WriteOutputFilesAsync(this._context.OutputFiles);
+                _log.Info<StaticGenerator>("Writing files...");
+                await _fileSystem.WriteOutputFilesAsync(_context.OutputFiles);
             }
             finally
             {
-                this._log.Info<StaticGenerator>("Deleting temp directory...");
-                await this._fileSystem.DeleteTempFolderAsync();
+                _log.Info<StaticGenerator>("Deleting temp directory...");
+                await _fileSystem.DeleteTempFolderAsync();
             }
         }
 
@@ -88,8 +87,8 @@ namespace IronBeard.Core.Features.Generator
         /// </summary>
         /// <returns>Task</returns>
         private async Task RunPreProcessing(){
-            foreach(var processor in this._processors)
-                foreach(var file in this._context.InputFiles)
+            foreach(var processor in _processors)
+                foreach(var file in _context.InputFiles)
                     await processor.PreProcessAsync(file);
         }
 
@@ -100,8 +99,8 @@ namespace IronBeard.Core.Features.Generator
         /// <returns>Task</returns>
         private async Task RunProcessing(){
             var outputFiles = new Dictionary<string, OutputFile>();
-            foreach(var processor in this._processors){
-                foreach(var file in this._context.InputFiles){
+            foreach(var processor in _processors){
+                foreach(var file in _context.InputFiles){
                     var output = await processor.ProcessAsync(file);
                     if(output == null)
                         continue;
@@ -111,7 +110,7 @@ namespace IronBeard.Core.Features.Generator
                 }
             }
 
-            this._context.OutputFiles = outputFiles.Select(x => x.Value);
+            _context.OutputFiles = outputFiles.Select(x => x.Value);
         }
 
         /// <summary>
@@ -120,8 +119,8 @@ namespace IronBeard.Core.Features.Generator
         /// </summary>
         /// <returns></returns>
         private async Task RunPostProcessing(){
-            foreach(var processor in this._processors)
-                foreach(var file in this._context.OutputFiles)
+            foreach(var processor in _processors)
+                foreach(var file in _context.OutputFiles)
                     await processor.PostProcessAsync(file);
         }        
     }

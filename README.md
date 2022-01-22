@@ -30,7 +30,7 @@ Adding a `beard.json` file to your project root allows for further configuration
 
 ## Get started
 
-Download the [.NET Core 2.1 SDK](https://aka.ms/DotNetCore21) or newer.
+Download the [.NET 6 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0) or newer.
 Once installed, run this command:
 
 ```

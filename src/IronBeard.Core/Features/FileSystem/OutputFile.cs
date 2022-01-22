@@ -1,27 +1,29 @@
-using System.Collections.Generic;
-
 namespace IronBeard.Core.Features.FileSystem
 {
-    /// <summary>
-    /// This represents a file to be written to disk
-    /// </summary>
-    public class OutputFile : InputFile
+    public record OutputFile
     {
-        public string Content { get; set; }
-        public InputFile Input { get; set; }
-        public bool DirectCopy { get; set; }
-        public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
-        public string Url { get; set; }
+        public InputFile Input { get; private set;}
+        public string Name { get; private set;}
+        public string Extension { get; set;}
+        public string BaseDirectory { get; private set;}
+        public string RelativeDirectory { get; private set;}
 
-        public static OutputFile FromInputFile(InputFile file){
-            return new OutputFile()
-            {
-                Name = file.Name,
-                Extension = file.Extension,
-                RelativeDirectory = file.RelativeDirectory,
-                BaseDirectory = file.BaseDirectory,
-                Input = file
-            };
+        public Dictionary<string, string> Metadata { get; set; } = new Dictionary<string, string>();
+        public bool DirectCopy { get; set; }
+        public string? Content { get; set; }
+        public string? Url { get; set; }
+        public string FullDirectory => Path.GetFullPath(BaseDirectory + RelativeDirectory);
+        public string FullPath => Path.Combine(FullDirectory, Name + Extension);
+        public string RelativePath => Path.Combine(RelativeDirectory, Name + Extension);
+
+        public OutputFile(InputFile inputFile, string baseDirectory)
+        {
+            Input = inputFile;
+            Name = inputFile.Name;
+            Extension = inputFile.Extension;
+            BaseDirectory = baseDirectory;
+            RelativeDirectory = inputFile.RelativeDirectory;
         }
+
     }
 }

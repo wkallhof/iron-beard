@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using IronBeard.Core.Features.Configuration;
 using IronBeard.Core.Features.Generator;
 using IronBeard.Cli.Features.Logging;
@@ -13,7 +11,6 @@ using IronBeard.Core.Features.Static;
 using McMaster.Extensions.CommandLineUtils;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.IO;
 using System.Reflection;
 
 namespace IronBeard.Cli.Features.Commands
@@ -26,7 +23,7 @@ namespace IronBeard.Cli.Features.Commands
         public string InputDirectory { get; set; } = ".";
 
         [Option("-o|--output <PATH>", "Provide the directory where Iron Beard should write the static site to.", CommandOptionType.SingleValue)]
-        public string OutputDirectory { get; set; }
+        public string? OutputDirectory { get; set; }
 
         /// <summary>
         /// Main execution method for the Generate command. Normalizes the inputs,
@@ -34,7 +31,7 @@ namespace IronBeard.Cli.Features.Commands
         /// </summary>
         /// <param name="app">App context</param>
         /// <returns>Status code</returns>
-        public async Task<int> OnExecuteAsync(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync()
         {
             // normalize inputs
             var inputArg = InputDirectory;
@@ -58,10 +55,10 @@ namespace IronBeard.Cli.Features.Commands
 
             try{
                 var startTime = DateTime.Now;
-                logger.Info<GenerateCommand>($"--- Iron Beard v{this.GetVersion()} --- ");
+                logger.Info<GenerateCommand>($"--- Iron Beard v{GetVersion()} --- ");
                 await generator.Generate();
                 var completeTime = DateTime.Now;
-                logger.Info<GenerateCommand>($"Completed in {(completeTime - startTime).TotalSeconds.ToString("N2")}s");
+                logger.Info<GenerateCommand>($"Completed in {(completeTime - startTime).TotalSeconds:N2}s");
                 return 0;
             }
             catch(Exception e){
@@ -76,7 +73,7 @@ namespace IronBeard.Cli.Features.Commands
         /// <param name="inputDirectory">Defined Input Directory</param>
         /// <param name="outputDirectory">Defined Output Directory</param>
         /// <returns>Service Provider</returns>
-        private ServiceProvider ConfigureServices(string inputDirectory, string outputDirectory)
+        private static ServiceProvider ConfigureServices(string inputDirectory, string outputDirectory)
         {
             var services = new ServiceCollection();
 
@@ -112,6 +109,6 @@ namespace IronBeard.Cli.Features.Commands
         /// the assembly for the version info
         /// </summary>
         /// <returns>Version info</returns>
-        private string GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        private static string? GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
     }
 }

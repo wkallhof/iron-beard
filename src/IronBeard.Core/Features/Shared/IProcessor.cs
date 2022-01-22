@@ -10,7 +10,7 @@ namespace IronBeard.Core.Features.Shared
     public interface IProcessor
     {
         Task PreProcessAsync(InputFile file);
-        Task<OutputFile> ProcessAsync(InputFile file);
+        Task<OutputFile?> ProcessAsync(InputFile file);
         Task PostProcessAsync(OutputFile file);
     }
 }

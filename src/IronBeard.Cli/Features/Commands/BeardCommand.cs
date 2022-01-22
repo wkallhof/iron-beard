@@ -15,7 +15,7 @@ namespace IronBeard.Cli.Features.Commands
     [Subcommand("watch", typeof(WatchCommand))]
     public class BeardCommand
     {
-        public string[] RemainingArgs { get; set; }
+        public string[]? RemainingArgs { get; set; }
 
         /// <summary>
         /// If this execute method is hit, the user didn't pass in a subcommand.
@@ -23,7 +23,7 @@ namespace IronBeard.Cli.Features.Commands
         /// </summary>
         /// <param name="app">App context</param>
         /// <returns>Status code</returns>
-        public async Task<int> OnExecuteAsync(CommandLineApplication app)
+        public async Task<int> OnExecuteAsync()
         {
             return await CommandLineApplication.ExecuteAsync<GenerateCommand>(RemainingArgs);
         }
@@ -33,6 +33,6 @@ namespace IronBeard.Cli.Features.Commands
         /// the assembly for the version info
         /// </summary>
         /// <returns>Version info</returns>
-        private static string GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>().InformationalVersion;
+        private static string? GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
     }
 }

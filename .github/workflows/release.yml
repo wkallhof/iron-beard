@@ -1,11 +1,11 @@
-name: .NET
+name: Release
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  build:
+  release:
 
     runs-on: ubuntu-latest
 
@@ -18,3 +18,8 @@ jobs:
         
     - name: Build
       run: dotnet build ./src
+      
+    - name: Test
+      run: dotnet run --project ./src/IronBeard.Cli -- generate -i ./samples/razor-markdown-sample
+      
+      

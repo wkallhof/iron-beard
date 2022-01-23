@@ -1,8 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
-  </ItemGroup>
+  <PropertyGroup>
+    <PackageId>IronBeard</PackageId>
+    <Authors>Wade Kallhoff</Authors>
+
+    <AssemblyName>beard</AssemblyName>
+    <ToolCommandName>beard</ToolCommandName>
+    <OutputType>Exe</OutputType>
+    <IsPackable>true</IsPackable>
+    <PackAsTool>true</PackAsTool>
+    <Description>A simple command-line static site generator for .NET Core</Description>
+    <Version>1.2.0</Version>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/wkallhof/iron-beard/</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/wkallhof/iron-beard/</RepositoryUrl>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <PreserveCompilationContext>true</PreserveCompilationContext>
+    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Colorful.Console" Version="1.2.9" />
@@ -10,21 +27,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
-  <PropertyGroup>
-    <PackageId>IronBeard</PackageId>
-    <Authors>Wade Kallhoff</Authors>
-
-    <AssemblyName>beard</AssemblyName>
-    <OutputType>Exe</OutputType>
-    <IsPackable>true</IsPackable>
-    <PackAsTool>true</PackAsTool>
-    <Description>A simple command-line static site generator for .NET Core</Description>
-    <Version>1.0.0.0</Version>
-    <TargetFramework>net6.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <PreserveCompilationContext>true</PreserveCompilationContext>
-    <PublishWithAspNetCoreTargetManifest>false</PublishWithAspNetCoreTargetManifest>
-  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
+  </ItemGroup>
 
 </Project>

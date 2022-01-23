@@ -3,6 +3,8 @@ name: Release
 on:
   push:
     branches: [ master ]
+    tags:
+      - "v*"
 
 jobs:
   release:
@@ -10,6 +12,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Output Version
+      run: echo ${{ github.ref }}
+      
     - uses: actions/checkout@v2
     - name: Setup .NET
       uses: actions/setup-dotnet@v1
@@ -22,7 +27,6 @@ jobs:
     - name: Test
       run: dotnet run --project ./src/IronBeard.Cli -- generate -i ./samples/razor-markdown-sample
       
-    - name: Output Version
-      run: echo 1.0.${{ github.run_number }}
+    
       
       

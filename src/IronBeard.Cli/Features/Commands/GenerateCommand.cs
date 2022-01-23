@@ -13,102 +13,101 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 
-namespace IronBeard.Cli.Features.Commands
+namespace IronBeard.Cli.Features.Commands;
+
+[Command(Description = "Generates a static site from the files in the given directory", ThrowOnUnexpectedArgument = false)]
+public class GenerateCommand
 {
-    [Command(Description = "Generates a static site from the files in the given directory", ThrowOnUnexpectedArgument = false)]
-    public class GenerateCommand
+    [Option("-i|--input <PATH>", "Provide the root directory where Iron Beard should look for files to generate a static site from.", CommandOptionType.SingleValue)]
+    [DirectoryExists]
+    public string InputDirectory { get; set; } = ".";
+
+    [Option("-o|--output <PATH>", "Provide the directory where Iron Beard should write the static site to.", CommandOptionType.SingleValue)]
+    public string? OutputDirectory { get; set; }
+
+    /// <summary>
+    /// Main execution method for the Generate command. Normalizes the inputs,
+    /// builds up the DI container, adds processors, and executes generator
+    /// </summary>
+    /// <param name="app">App context</param>
+    /// <returns>Status code</returns>
+    public async Task<int> OnExecuteAsync()
     {
-        [Option("-i|--input <PATH>", "Provide the root directory where Iron Beard should look for files to generate a static site from.", CommandOptionType.SingleValue)]
-        [DirectoryExists]
-        public string InputDirectory { get; set; } = ".";
+        // normalize inputs
+        var inputArg = InputDirectory;
+        var outputArg = OutputDirectory ?? Path.Combine(inputArg, "www");
 
-        [Option("-o|--output <PATH>", "Provide the directory where Iron Beard should write the static site to.", CommandOptionType.SingleValue)]
-        public string? OutputDirectory { get; set; }
+        var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, inputArg));
+        var outputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, outputArg));
 
-        /// <summary>
-        /// Main execution method for the Generate command. Normalizes the inputs,
-        /// builds up the DI container, adds processors, and executes generator
-        /// </summary>
-        /// <param name="app">App context</param>
-        /// <returns>Status code</returns>
-        public async Task<int> OnExecuteAsync()
-        {
-            // normalize inputs
-            var inputArg = InputDirectory;
-            var outputArg = OutputDirectory ?? Path.Combine(inputArg, "www");
+        // configure services
+        var services = ConfigureServices(inputPath, outputPath);
 
-            var inputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, inputArg));
-            var outputPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, outputArg));
+        // fetch the services we need right now
+        var logger = services.GetService<ILogger>();
+        var generator = services.GetService<StaticGenerator>();
 
-            // configure services
-            var services = ConfigureServices(inputPath, outputPath);
+        // add our processors in the desired order
+        generator.AddProcessor(services.GetService<MarkdownProcessor>());
+        generator.AddProcessor(services.GetService<RazorProcessor>());
+        generator.AddProcessor(services.GetService<StaticProcessor>());
+        generator.AddProcessor(services.GetService<HtmlFormatProcessor>());
 
-            // fetch the services we need right now
-            var logger = services.GetService<ILogger>();
-            var generator = services.GetService<StaticGenerator>();
-
-            // add our processors in the desired order
-            generator.AddProcessor(services.GetService<MarkdownProcessor>());
-            generator.AddProcessor(services.GetService<RazorProcessor>());
-            generator.AddProcessor(services.GetService<StaticProcessor>());
-            generator.AddProcessor(services.GetService<HtmlFormatProcessor>());
-
-            try{
-                var startTime = DateTime.Now;
-                logger.Info<GenerateCommand>($"--- Iron Beard v{GetVersion()} --- ");
-                await generator.Generate();
-                var completeTime = DateTime.Now;
-                logger.Info<GenerateCommand>($"Completed in {(completeTime - startTime).TotalSeconds:N2}s");
-                return 0;
-            }
-            catch(Exception e){
-                logger.Fatal<GenerateCommand>(e.Message);
-                return 1;
-            }
+        try{
+            var startTime = DateTime.Now;
+            logger.Info<GenerateCommand>($"--- Iron Beard v{GetVersion()} --- ");
+            await generator.Generate();
+            var completeTime = DateTime.Now;
+            logger.Info<GenerateCommand>($"Completed in {(completeTime - startTime).TotalSeconds:N2}s");
+            return 0;
         }
-
-        /// <summary>
-        /// Builds up our service container for DI
-        /// </summary>
-        /// <param name="inputDirectory">Defined Input Directory</param>
-        /// <param name="outputDirectory">Defined Output Directory</param>
-        /// <returns>Service Provider</returns>
-        private static ServiceProvider ConfigureServices(string inputDirectory, string outputDirectory)
-        {
-            var services = new ServiceCollection();
-
-            // build configuration
-            var configuration = new ConfigurationBuilder()
-                .SetBasePath(inputDirectory)
-                .AddJsonFile("beard.json", optional:true)
-                .Build();
-
-            services.AddOptions();
-
-            // bind to our config model
-            var config = new BeardConfig();
-            configuration.Bind("Config", config);
-            services.AddSingleton(config);
-
-            services.AddSingleton<GeneratorContext>(new GeneratorContext(inputDirectory, outputDirectory));
-            services.AddSingleton<MarkdownProcessor>();
-            services.AddSingleton<RazorProcessor>();
-            services.AddSingleton<StaticProcessor>();
-            services.AddSingleton<HtmlFormatProcessor>();
-            services.AddSingleton<ILogger, ConsoleLogger>();
-            services.AddSingleton<IFileSystem, DiskFileSystem>();
-            services.AddTransient<IUrlProvider, UrlProvider>();
-            services.AddSingleton<RazorViewRenderer>();
-            services.AddSingleton<StaticGenerator>();
-
-            return services.BuildServiceProvider();
+        catch(Exception e){
+            logger.Fatal<GenerateCommand>(e.Message);
+            return 1;
         }
-
-        /// <summary>
-        /// Get's the current version of the CLI application by reading
-        /// the assembly for the version info
-        /// </summary>
-        /// <returns>Version info</returns>
-        private static string? GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
     }
+
+    /// <summary>
+    /// Builds up our service container for DI
+    /// </summary>
+    /// <param name="inputDirectory">Defined Input Directory</param>
+    /// <param name="outputDirectory">Defined Output Directory</param>
+    /// <returns>Service Provider</returns>
+    private static ServiceProvider ConfigureServices(string inputDirectory, string outputDirectory)
+    {
+        var services = new ServiceCollection();
+
+        // build configuration
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(inputDirectory)
+            .AddJsonFile("beard.json", optional:true)
+            .Build();
+
+        services.AddOptions();
+
+        // bind to our config model
+        var config = new BeardConfig();
+        configuration.Bind("Config", config);
+        services.AddSingleton(config);
+
+        services.AddSingleton<GeneratorContext>(new GeneratorContext(inputDirectory, outputDirectory));
+        services.AddSingleton<MarkdownProcessor>();
+        services.AddSingleton<RazorProcessor>();
+        services.AddSingleton<StaticProcessor>();
+        services.AddSingleton<HtmlFormatProcessor>();
+        services.AddSingleton<ILogger, ConsoleLogger>();
+        services.AddSingleton<IFileSystem, DiskFileSystem>();
+        services.AddTransient<IUrlProvider, UrlProvider>();
+        services.AddSingleton<RazorViewRenderer>();
+        services.AddSingleton<StaticGenerator>();
+
+        return services.BuildServiceProvider();
+    }
+
+    /// <summary>
+    /// Get's the current version of the CLI application by reading
+    /// the assembly for the version info
+    /// </summary>
+    /// <returns>Version info</returns>
+    private static string? GetVersion() => typeof(BeardCommand).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 }

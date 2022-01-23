@@ -2,60 +2,59 @@ using IronBeard.Core.Extensions;
 using IronBeard.Core.Features.Configuration;
 using IronBeard.Core.Features.FileSystem;
 
-namespace IronBeard.Core.Features.Routing
+namespace IronBeard.Core.Features.Routing;
+
+/// <summary>
+/// Manages building a file's URL
+/// </summary>
+public interface IUrlProvider
 {
     /// <summary>
-    /// Manages building a file's URL
+    /// Get's the URL path for the given InputFile
     /// </summary>
-    public interface IUrlProvider
-    {
-        /// <summary>
-        /// Get's the URL path for the given InputFile
-        /// </summary>
-        /// <param name="file">File to build URL from</param>
-        /// <returns>URL of file</returns>
-        string GetUrl(InputFile file);
+    /// <param name="file">File to build URL from</param>
+    /// <returns>URL of file</returns>
+    string GetUrl(InputFile file);
+}
+
+/// <summary>
+/// Implementation of IUrlProvider that
+/// uses a file's extensions and config settings
+/// to return a proper URL for the file to be rendered in the site
+/// 
+/// TODO: Consider how to use this with OutputFile instead
+/// </summary>
+public class UrlProvider : IUrlProvider
+{
+    private readonly BeardConfig _config;
+
+    public UrlProvider(BeardConfig config){
+        _config = config;
     }
 
     /// <summary>
-    /// Implementation of IUrlProvider that
-    /// uses a file's extensions and config settings
-    /// to return a proper URL for the file to be rendered in the site
-    /// 
-    /// TODO: Consider how to use this with OutputFile instead
+    /// Given the InputFile, this scans the files extensions, and builds the correct
+    /// URL path based on the file and current BeardConfig settings
     /// </summary>
-    public class UrlProvider : IUrlProvider
-    {
-        private readonly BeardConfig _config;
+    /// <param name="file">File to return URL for</param>
+    /// <returns>File URL</returns>
+    public string GetUrl(InputFile file){
 
-        public UrlProvider(BeardConfig config){
-            _config = config;
-        }
+        // for our Index files, we just return the directory path. The static servers
+        // automatically look for the index.html file to render
+        if(file.Name.IgnoreCaseEquals(_config.IndexFileName))
+            return file.RelativeDirectory;
 
-        /// <summary>
-        /// Given the InputFile, this scans the files extensions, and builds the correct
-        /// URL path based on the file and current BeardConfig settings
-        /// </summary>
-        /// <param name="file">File to return URL for</param>
-        /// <returns>File URL</returns>
-        public string GetUrl(InputFile file){
+        // For any other file, determine what the eventual extension will be.
+        // If it is .md or .cshtml, return .HTML. Any other extension is copied as is
+        var extension = file.Extension.IgnoreCaseEquals(".cshtml") 
+                || file.Extension.IgnoreCaseEquals(".md")
+                ?  ".html" : file.Extension;
 
-            // for our Index files, we just return the directory path. The static servers
-            // automatically look for the index.html file to render
-            if(file.Name.IgnoreCaseEquals(_config.IndexFileName))
-                return file.RelativeDirectory;
+        // check if we need to exclude HTML extensions. If so, exclude it from the URL as well
+        extension = _config.ExcludeHtmlExtension && extension.IgnoreCaseEquals(".html") ? string.Empty : extension;
 
-            // For any other file, determine what the eventual extension will be.
-            // If it is .md or .cshtml, return .HTML. Any other extension is copied as is
-            var extension = file.Extension.IgnoreCaseEquals(".cshtml") 
-                    || file.Extension.IgnoreCaseEquals(".md")
-                    ?  ".html" : file.Extension;
-
-            // check if we need to exclude HTML extensions. If so, exclude it from the URL as well
-            extension = _config.ExcludeHtmlExtension && extension.IgnoreCaseEquals(".html") ? string.Empty : extension;
-
-            // return resulting URL
-            return Path.Combine(file.RelativeDirectory, file.Name + extension);
-        }
+        // return resulting URL
+        return Path.Combine(file.RelativeDirectory, file.Name + extension);
     }
 }

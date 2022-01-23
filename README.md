@@ -1,5 +1,5 @@
 # IronBeard
-[![NuGet][nuget-badge]][nuget] [![Build status][appveyor-badge]][appveyor] 
+[![NuGet][nuget-badge]][nuget] [![Release Status](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml/badge.svg)](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml)
 
 [nuget]: https://www.nuget.org/packages/IronBeard/
 [nuget-badge]: https://img.shields.io/nuget/v/IronBeard.svg?style=flat-square&label=nuget

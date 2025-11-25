@@ -7,13 +7,13 @@ namespace IronBeard.Cli.Features.Commands;
 /// Main command handler. If no sub-command is passed in,
 /// it defaults the request to the `generate` command.
 /// </summary>
-[Command("beard", ThrowOnUnexpectedArgument = false)]
+[Command("beard", UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.StopParsingAndCollect)]
 [VersionOptionFromMember("--version", MemberName = nameof(GetVersion))]
-[Subcommand("generate", typeof(GenerateCommand))]
-[Subcommand("watch", typeof(WatchCommand))]
+[Subcommand(typeof(GenerateCommand))]
+[Subcommand(typeof(WatchCommand))]
 public class BeardCommand
 {
-    public string[]? RemainingArgs { get; set; }
+    public required string[] RemainingArgs { get; set; }
 
     /// <summary>
     /// If this execute method is hit, the user didn't pass in a subcommand.

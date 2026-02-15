@@ -15,6 +15,7 @@
     <PackageProjectUrl>https://github.com/wkallhof/iron-beard/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/wkallhof/iron-beard/</RepositoryUrl>
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <PreserveCompilationContext>true</PreserveCompilationContext>
@@ -29,6 +30,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\IronBeard.Core\IronBeard.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
 </Project>

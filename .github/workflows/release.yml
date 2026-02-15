@@ -21,7 +21,13 @@ jobs:
       - name: Build
         run: dotnet build ./src
 
-      - name: Test
+      - name: Unit Tests
+        run: dotnet run --project ./src/IronBeard.Core.Tests
+
+      - name: Integration Tests
+        run: dotnet run --project ./src/IronBeard.Cli.IntegrationTests
+
+      - name: Smoke Test
         run: dotnet run --project ./src/IronBeard.Cli -- generate -i ./samples/razor-markdown-sample
 
       - name: Build & Pack

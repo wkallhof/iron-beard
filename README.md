@@ -201,6 +201,30 @@ Partials are fully supported. Partial paths must be relative to the project root
 <partial name="../../shared/partials/_articles.cshtml" />
 ```
 
+## Development
+
+### Building
+
+```bash
+dotnet build ./src
+```
+
+### Running Tests
+
+```bash
+make test                # Run all tests (unit + integration)
+make test-unit           # Run unit tests only
+make test-integration    # Run integration tests only
+```
+
+### Other Commands
+
+```bash
+make example             # Generate static site from sample project
+make watch               # Watch sample project and rebuild on changes
+make serve               # Serve generated output (requires dotnet-serve)
+```
+
 ## License
 
 [MIT](./LICENSE)

@@ -1,4 +1,6 @@
 ﻿<Solution>
   <Project Path="IronBeard.Core/IronBeard.Core.csproj" />
   <Project Path="IronBeard.Cli/IronBeard.Cli.csproj" />
+  <Project Path="IronBeard.Core.Tests/IronBeard.Core.Tests.csproj" />
+  <Project Path="IronBeard.Cli.IntegrationTests/IronBeard.Cli.IntegrationTests.csproj" />
 </Solution>

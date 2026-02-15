@@ -32,3 +32,7 @@ msbuild.wrn
 .vs/
 
 www/
+
+# Coverage reports
+coverage.json
+coverage.cobertura.xml

@@ -14,7 +14,7 @@ namespace IronBeard.Core.Features.Razor;
 /// Razor View renderer that leverages the AspNetCore MVC razor engine
 /// to render Razor templates to a string
 /// </summary>
-public class RazorViewRenderer
+public class RazorViewRenderer : IRazorViewRenderer
 {
     private readonly RazorViewToStringRenderer _renderer;
     private readonly string _inputDirectory;

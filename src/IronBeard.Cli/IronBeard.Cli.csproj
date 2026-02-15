@@ -10,7 +10,7 @@
     <IsPackable>true</IsPackable>
     <PackAsTool>true</PackAsTool>
     <Description>A simple command-line static site generator for .NET Core</Description>
-    <Version>2.0.0</Version>
+    <Version>2.0.1</Version>
     <TargetFramework>net10.0</TargetFramework>
     <PackageProjectUrl>https://github.com/wkallhof/iron-beard/</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/wkallhof/iron-beard/</RepositoryUrl>

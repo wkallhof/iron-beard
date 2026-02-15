@@ -19,13 +19,13 @@ public class RazorProcessor : IProcessor
     private readonly ILogger _log;
     private readonly IUrlProvider _urlProvider;
     private readonly BeardConfig _config;
-    private readonly RazorViewRenderer _renderer;
+    private readonly IRazorViewRenderer _renderer;
     private readonly GeneratorContext _context;
 
     private const string YAML_DEL_START = "@*META";
     private const string YAML_DEL_END = "*@";
 
-    public RazorProcessor(IFileSystem fileSystem, RazorViewRenderer renderer, 
+    public RazorProcessor(IFileSystem fileSystem, IRazorViewRenderer renderer,
         ILogger logger, IUrlProvider urlProvider, BeardConfig config, GeneratorContext context){
         _fileSystem = fileSystem;
         _log = logger;

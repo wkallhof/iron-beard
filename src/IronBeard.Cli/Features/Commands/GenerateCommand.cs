@@ -98,7 +98,7 @@ public class GenerateCommand
         services.AddSingleton<ILogger, ConsoleLogger>();
         services.AddSingleton<IFileSystem, DiskFileSystem>();
         services.AddTransient<IUrlProvider, UrlProvider>();
-        services.AddSingleton<RazorViewRenderer>();
+        services.AddSingleton<IRazorViewRenderer, RazorViewRenderer>();
         services.AddSingleton<StaticGenerator>();
 
         return services.BuildServiceProvider();

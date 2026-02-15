@@ -65,7 +65,7 @@ public class CliGenerateTests : IDisposable
         var htmlFiles = Directory.GetFiles(_outputDir, "*.html", SearchOption.AllDirectories);
         Assert.NotEmpty(htmlFiles);
 
-        var content = await File.ReadAllTextAsync(htmlFiles[0]);
+        var content = await File.ReadAllTextAsync(htmlFiles[0], TestContext.Current.CancellationToken);
         Assert.False(string.IsNullOrWhiteSpace(content));
     }
 
@@ -77,7 +77,7 @@ public class CliGenerateTests : IDisposable
         var indexFile = Path.Combine(_outputDir, "index.html");
         if (File.Exists(indexFile))
         {
-            var content = await File.ReadAllTextAsync(indexFile);
+            var content = await File.ReadAllTextAsync(indexFile, TestContext.Current.CancellationToken);
             Assert.Contains("<html", content, StringComparison.OrdinalIgnoreCase);
         }
     }

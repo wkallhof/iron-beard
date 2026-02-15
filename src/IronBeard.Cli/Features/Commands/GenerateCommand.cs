@@ -15,7 +15,7 @@ using System.Reflection;
 
 namespace IronBeard.Cli.Features.Commands;
 
-[Command(Description = "Generates a static site from the files in the given directory", ThrowOnUnexpectedArgument = false)]
+[Command(Description = "Generates a static site from the files in the given directory", UnrecognizedArgumentHandling = UnrecognizedArgumentHandling.StopParsingAndCollect)]
 public class GenerateCommand
 {
     [Option("-i|--input <PATH>", "Provide the root directory where Iron Beard should look for files to generate a static site from.", CommandOptionType.SingleValue)]
@@ -44,14 +44,14 @@ public class GenerateCommand
         var services = ConfigureServices(inputPath, outputPath);
 
         // fetch the services we need right now
-        var logger = services.GetService<ILogger>();
-        var generator = services.GetService<StaticGenerator>();
+        var logger = services.GetService<ILogger>()!;
+        var generator = services.GetService<StaticGenerator>()!;
 
         // add our processors in the desired order
-        generator.AddProcessor(services.GetService<MarkdownProcessor>());
-        generator.AddProcessor(services.GetService<RazorProcessor>());
-        generator.AddProcessor(services.GetService<StaticProcessor>());
-        generator.AddProcessor(services.GetService<HtmlFormatProcessor>());
+        generator.AddProcessor(services.GetService<MarkdownProcessor>()!);
+        generator.AddProcessor(services.GetService<RazorProcessor>()!);
+        generator.AddProcessor(services.GetService<StaticProcessor>()!);
+        generator.AddProcessor(services.GetService<HtmlFormatProcessor>()!);
 
         try{
             var startTime = DateTime.Now;

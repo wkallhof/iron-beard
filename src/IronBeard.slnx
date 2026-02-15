@@ -1,0 +1,4 @@
+﻿<Solution>
+  <Project Path="IronBeard.Core/IronBeard.Core.csproj" />
+  <Project Path="IronBeard.Cli/IronBeard.Cli.csproj" />
+</Solution>

@@ -34,6 +34,6 @@ jobs:
         run: dotnet pack ./src/IronBeard.Cli/IronBeard.Cli.csproj -c Release -o ./output
 
       - name: Push to nuget
-        run: dotnet nuget push ./output/*.nupkg --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols true
+        run: dotnet nuget push ./output/*.nupkg --api-key ${{secrets.NUGET_TOKEN}} --source https://api.nuget.org/v3/index.json --skip-duplicate --no-symbols
         env:
           GITHUB_TOKEN: ${{ secrets.NUGET_TOKEN }}

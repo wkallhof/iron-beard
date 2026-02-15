@@ -1,181 +1,177 @@
 # IronBeard
-[![NuGet][nuget-badge]][nuget] [![Release Status](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml/badge.svg)](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml)
 
-[nuget]: https://www.nuget.org/packages/IronBeard/
-[nuget-badge]: https://img.shields.io/nuget/v/IronBeard.svg?style=flat-square&label=nuget
-[appveyor]: https://ci.appveyor.com/project/wkallhof/iron-beard/branch/master
-[appveyor-badge]: https://ci.appveyor.com/api/projects/status/xf9ra9257yclw3gg/branch/master?svg=true
+[![NuGet](https://img.shields.io/nuget/v/IronBeard.svg?style=flat-square&label=nuget)](https://www.nuget.org/packages/IronBeard/)
+[![Release Status](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml/badge.svg)](https://github.com/wkallhof/iron-beard/actions/workflows/release.yml)
 
-A simple and easy to use cross-platform static site generator built with .NET Core. IronBeard processes your Razor `.cshtml` files, markdown `.md` files into full `.html` files ready for static hosting on services like Amazon S3.
+A cross-platform static site generator built with .NET. IronBeard processes Razor (`.cshtml`) and Markdown (`.md`) files into static HTML ready for hosting on services like Amazon S3, GitHub Pages, or any static file server.
 
-IronBeard maintains your folder structure and copies static assets like images, JS, and CSS into their respective directories to maintain the correct linking on the generated site.
+- Preserves your folder structure and copies static assets (images, JS, CSS) to maintain correct linking
+- Wraps content in shared Razor layouts
+- Supports YAML metadata in both Markdown and Razor files
+- Cleans up generated HTML output
+- Handles URL routing automatically (index files, clean URLs without `.html` extensions)
+- Watches for file changes and rebuilds automatically
 
-Adding a `beard.json` file to your project root allows for further configuration (see below).
+## Getting Started
 
-## Features
-- [x] Support for recursive folder and file structures
-- [x] Markdown Processor (with extensions: see [Markdig](https://github.com/lunet-io/markdig))
-- [x] Razor Processor
-- [x] Static File Processor
-- [x] Razor Layout Support (wraps other razor files and markdown markup)
-- [x] Markdown metadata (YAML Frontmatter support in markdown)
-- [x] Razor metadata (YAML Frontmatter support with Razor comments)
-- [x] HTML Formatting to clean up file output. 
-- [x] URL correction (properly handles relative routes and root folder routing (index.html etc.))
-- [x] Global configuration file
-- [x] Rich CLI output
-- [x] Valid system errors codes (useful for automation)
-- [x] Watch command for automatic rebuilding on file or directory change
+### Prerequisites
 
+- [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) or newer
 
-## Get started
+### Installation
 
-Download the [.NET 10 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/10.0) or newer.
-Once installed, run this command:
-
-```
+```bash
 dotnet tool install --global IronBeard
 ```
-This will install the `beard` command globally on your machine.
 
-The simplest way to build a static site is by running the following in your project directory
+This installs the `beard` command globally on your machine.
 
-```
+### Quick Start
+
+Run `beard` in your project directory to scan for site files and generate a static site into a `www` folder:
+
+```bash
 beard
-```
-
-It will scan your current directory for site files and generate a `www` folder in your current directory with the generated static site.
-
-## Serving Local
-Rather than re-invent the wheel here and include a built in static server, it is recommended that you use [dotnet-serve](https://github.com/natemcmaster/dotnet-serve), a "Simple command-line HTTPS server for the .NET Core CLI" by [Nate McMaster](https://github.com/natemcmaster). 
-
-Just like IronBeard, you can install it via `dotnet tool`:
-```
-dotnet tool install --global dotnet-serve
-```
-and use it to serve your generated site using the CLI:
-
-```
-dotnet serve ./www
-```
-
-where `./www` is your output directory
-
-## Example
-
-See the [Samples](./samples) directory for sample projects that can be built with IronBeard.
-
-### Example Structure
-
-```
-.
-├── beard.json                  # IronBeard configuration file in the root
-├── index.cshtml                # Main homepage file
-├── shared                      # Standard Shared folder, common in .NET templating
-│   ├── _Layout.cshtml          # Standard _Layout.cshtml file
-│   ├── Partials                # Full Partials support
-|   |   └── ...
-│   └── ...
-├── articles                    # Any level of folder testing
-│   ├── foo-bar.md              # Markdown file support
-│   ├── lorem-ipsum.cshtml      # Razor File support for more complex pages
-│   └── ...
-├── assets                      # Standard assets folder structure. Include CSS, JS, Images, etc.
-│   ├── site.css                
-│   ├── site.js
-│   ├── images
-|   |   └── ...
-│   └── ...        
-└── ...
 ```
 
 ## Usage
 
 ```
-Usage: beard [options] [command]
-
-Options:
-  --version     Show version information
-  -?|-h|--help  Show help information
+beard [options] [command]
 
 Commands:
-  generate      Generates a static site from the files in the given directory
-  watch         Watch a directory for changes and rebuild automatically
-```
-
-## Generate
-Generate is the main and default command for IronBeard. This will take in your provided input folder (defaults to the current directory) and generate your static site into the provided output folder (defaults to `./www`);
-
-```
-Generates a static site from the files in the given directory
-
-Usage: beard generate [options]
+  generate    Generate a static site from the files in a directory (default)
+  watch       Watch a directory for changes and rebuild automatically
 
 Options:
-  -i|--input <PATH>   Provide the root directory where Iron Beard should look for files to generate a static site from.
-  -o|--output <PATH>  Provide the directory where Iron Beard should write the static site to.
-  -?|-h|--help        Show help information
+  --version       Show version information
+  -?|-h|--help    Show help information
 ```
 
-## Watch
-Watch is similary to Generate (the paramaters are all the same), but once it is done generating, it will continue to watch your input directory for changes. When any changes are detected, it will automatically re-generate the static site.
+### `generate`
+
+The default command. Takes an input folder (defaults to current directory) and generates your static site into an output folder (defaults to `./www`).
+
+```bash
+beard generate -i ./my-site -o ./output
 ```
-Watch a directory for changes and rebuild automatically
 
-Usage: beard watch [options]
+| Option | Description |
+|---|---|
+| `-i\|--input <PATH>` | Root directory to scan for source files (default: current directory) |
+| `-o\|--output <PATH>` | Directory to write the generated site to (default: `./www`) |
 
-Options:
-  -i|--input <PATH>   Provide the root directory where Iron Beard should look for files to generate a static site from.
-  -o|--output <PATH>  Provide the directory where Iron Beard should write the static site to.
-  -?|-h|--help        Show help information
+### `watch`
+
+Same options as `generate`, but continues watching the input directory for changes and automatically rebuilds when files are modified.
+
+```bash
+beard watch -i ./my-site -o ./output
+```
+
+### Serving Locally
+
+For local preview, use [dotnet-serve](https://github.com/natemcmaster/dotnet-serve):
+
+```bash
+dotnet tool install --global dotnet-serve
+dotnet serve ./www
+```
+
+## Project Structure
+
+See the [samples](./samples) directory for a complete working example.
+
+```
+.
+├── beard.json                  # Configuration file (optional)
+├── index.cshtml                # Homepage
+├── shared/
+│   ├── _Layout.cshtml          # Layout template wrapping all pages
+│   └── Partials/
+│       └── _navigation.cshtml  # Reusable partial views
+├── articles/
+│   ├── index.cshtml            # Section landing page
+│   ├── my-post.md              # Markdown content
+│   └── my-page.cshtml          # Razor content
+└── assets/
+    ├── site.css                # Static assets are copied as-is
+    ├── site.js
+    └── images/
 ```
 
 ## Configuration
-IronBeard allows for further configuration by adding a `beard.json` configuration file in the root of your project.
-The default configuration is as follows:
 
-```
+Add a `beard.json` file to your project root to customize behavior:
+
+```json
 {
-    "Config" : {
-        "SiteTitle" : "Razor Markdown Sample",
-        "IndexFileName" : "index",
-        "LayoutFileName" : "_Layout",
-        "StaticExtensionIgnoreList" : [".cshtml", ".md", ".DS_Store", ".json" ],
+    "Config": {
+        "SiteTitle": "My Site",
+        "IndexFileName": "index",
+        "LayoutFileName": "_Layout",
+        "StaticExtensionIgnoreList": [".cshtml", ".md", ".DS_Store", ".json"],
         "ExcludeHtmlExtension": true,
         "EnableMarkdownExtensions": false
     }
 }
 ```
 
-* `SiteTitle` : This is the title to display for your generated site. This will be propagated to things like the browser tab.
+| Option | Default | Description |
+|---|---|---|
+| `SiteTitle` | — | Site title displayed in the browser tab |
+| `IndexFileName` | `"index"` | Filename treated as the directory index (e.g., `/articles/index.cshtml` serves at `/articles`) |
+| `LayoutFileName` | `"_Layout"` | Name of the layout file used to wrap `.cshtml` and `.md` content |
+| `StaticExtensionIgnoreList` | `[".cshtml", ".md", ".DS_Store", ".json"]` | File extensions the static processor should skip (everything else is copied to output) |
+| `ExcludeHtmlExtension` | `true` | Omit `.html` extensions from output files for cleaner URLs (`/articles/my-post` instead of `/articles/my-post.html`). Your static host may need to be configured to serve these files with `content-type: text/html`. Set to `false` to include `.html` extensions. |
+| `EnableMarkdownExtensions` | `false` | Enable [Markdig extensions](https://github.com/lunet-io/markdig) (tables, abbreviations, etc.) |
 
-* `IndexFileName` : This is the file name that should be display as the root in any directory. For example, if you had a `/projects` folder and you wanted a page to represent your projects, you'd put a file `/projects/index.cshtml` into that directory, which will be loaded when a user goes to `/projects` in their browser
+## Metadata
 
-* `LayoutFileName` : This is the layout file used to wrap your `.cshtml` and `.md` files. IronBeard will look for this file to determine the layout to use.
+IronBeard supports YAML metadata in both Markdown and Razor files. Metadata is exposed to Razor templates via the `Metadata` dictionary on each page's `OutputFile` model.
 
-* `StaticExtensionIgnoreList` : This array should hold the list of extensions you want the static processor to ignore. If it is _not_ in this list, the files will be copied into the output directory.
+### In Markdown
 
-* `ExcludeHtmlExtension` : Defaults to `true`, this will not write out the `.html` extension for your generated HTML pages. This provides cleaner routing : `/articles/article` vs `/articles/article.html`. Special work may need to be done to ensure your static host sets the correct `content-type` for your uploaded files to `text/html`. Some rely on the extension to determine this, which these html files will not have. Setting this to false will write out the `.html` extensions as well as update the `Url` property to include the extension so you can navigate your static site locally without the use of a static file server.
+Standard YAML frontmatter at the top of the file:
 
-* `EnableMarkdownExtensions` : Defaults to `false`, enables markdown extensions (see [Markdig](https://github.com/lunet-io/markdig)).
+```markdown
+---
+Title: My Article
+Tags: Blog
+---
+
+# Article content here
+```
+
+### In Razor
+
+Uses a special Razor comment syntax. Can appear anywhere in the file:
+
+```html
+@*META
+Title: My Article
+Tags: Blog
+*@
+```
 
 ## ViewContext
 
-Razor files can take advantage of the `ViewContext` model that is automatically passed in to each view file while rendering by appending `@model IronBeard.Core.Features.Generator.ViewContext` to the top of the Razor file.
+Razor files receive a `ViewContext` model with access to the current page and its relationship to other pages. Add this to the top of your Razor file:
 
-The ViewContext contains the following useful properties
-```
-public class ViewContext
-{
-    public OutputFile Current {get;set;}                    #Access the current page's model, including MetaData (see below)
-    public IEnumerable<OutputFile> Siblings { get; set; }   #Access the current page's sibling pages
-    public IEnumerable<OutputFile> Children { get; set; }   #Access the current page's children pages (sub directories)
-    public IEnumerable<OutputFile> All { get; set; }        #Access HTML pages in the site
-}
+```html
+@model IronBeard.Core.Features.Generator.ViewContext
 ```
 
-### Example
-```
+| Property | Type | Description |
+|---|---|---|
+| `Model.Current` | `OutputFile` | The current page, including its `Metadata` dictionary |
+| `Model.Siblings` | `IEnumerable<OutputFile>` | Other pages in the same directory |
+| `Model.Children` | `IEnumerable<OutputFile>` | Pages in subdirectories |
+| `Model.All` | `IEnumerable<OutputFile>` | All HTML pages in the site |
+
+### Example: Listing Articles
+
+```html
 @using System.Linq
 @model IronBeard.Core.Features.Generator.ViewContext
 @{
@@ -194,38 +190,17 @@ public class ViewContext
 ```
 
 ## Partials
-Partials are fully supported in IronBeard. However, it is important to note that the pathing to the partial should be relative to the root of the application and not the current file. For example
 
-#### Bad:
-```
+Partials are fully supported. Partial paths must be relative to the project root, not the current file:
+
+```html
+<!-- Good -->
+<partial name="/shared/partials/_articles.cshtml" />
+
+<!-- Bad — don't use relative paths -->
 <partial name="../../shared/partials/_articles.cshtml" />
 ```
 
-#### Good:
-```
-<partial name="/shared/partials/_articles.cshtml" />
-```
+## License
 
-
-## Metadata
-
-IronBeard supports YAML Frontmatter in both Markdown and Razor files. This YAML is processed and exposed on the Model passed into all Razor views via each page's `Metadata` property. However, the syntax is slightly different between the two file types:
-
-#### Razor
-I found it important to be able to specify the metadata for a Razor anywhere in the document, so there is no requirement that the frontmatter be defined at the very top of the file. Instead, it uses Razor Comments with a `META` attached to the opening. Everything between the `@*META` and `*@` is processed as YAML.
-```
-@*META
-Title: Posita vixque alis
-Tags: Article
-*@
-```
-
-#### Markdown
-The YAML format here follows standards on requiring the frontmatter to be defined at the very beginning of the file. 
-```
----
-Title: Posita vixque alis
-Tags: Article
----
-```
-
+[MIT](./LICENSE)
